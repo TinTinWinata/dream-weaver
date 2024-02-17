@@ -1,0 +1,30 @@
+{
+  "canisters": {
+    "dream_weaver_backend": {
+      "build": "npx azle dream_weaver_backend",
+      "candid": "src/dream_weaver_backend/dream_weaver_backend.did",
+      "gzip": true,
+      "main": "src/dream_weaver_backend/src/index.ts",
+      "type": "custom",
+      "wasm": ".azle/dream_weaver_backend/dream_weaver_backend.wasm"
+    },
+    "dream_weaver_frontend": {
+      "dependencies": [
+        "dream_weaver_backend"
+      ],
+      "source": [
+        "src/dream_weaver_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "dream_weaver_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
