@@ -7,6 +7,7 @@ import DonatePage from "./pages/donate-page";
 import HomePage from "./pages/home-page";
 import MePage from "./pages/me-page/me-page";
 import ProfilePage from "./pages/profile-page";
+import RegisterPage from "./pages/register-page";
 import MainTemplate from "./templates/main-template";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Route path="/crowdfund" element={<CrowdfundPage/>}/>
             <Route path="/crowdfund/:id" element={<CrowdfundDetailPage/>}/>
             <Route path="/create-crowdfund" element={<CreateCrowdfundPage/>}/>
+            <Route path="/register" element={<RegisterPage/>}/>
           </Routes>
         </MainTemplate>
       </BrowserRouter>

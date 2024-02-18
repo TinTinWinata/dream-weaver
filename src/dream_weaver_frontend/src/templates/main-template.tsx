@@ -7,7 +7,7 @@ export default function MainTemplate({children}: TChildrenProps) {
     <div className="transition-all bg-primary center w-full min-h-screen min-w-screen">
       <div className="text-white min-h-screen  font-nunito font-semibold max-w-screen-lg w-full">
         <Navigation/>
-        <div className="min-h-screen">
+        <div className="min-h-screen mx-8">
           {children}
         </div>
         <Footer/>
