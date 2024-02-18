@@ -8,22 +8,26 @@ const meCards: TMeCardProps[] = [
   {
     animationData: overlayAnimation,
     title: 'Overlay',
-    description: 'OBS overlay for streaming experience .' 
+    description: 'OBS overlay for streaming experience .',
+    link: '/overlay'
   },
   {
     animationData: cashflowAnimation,
     title: 'Cashflow',
-    description: 'See your block chain coin transactions.' 
+    description: 'See your block chain coin transactions.', 
+    link: '/cashflow'
   },
   {
     animationData: settingAnimation,
     title: 'Profile',
-    description: 'Setup your profile for better experience.' 
+    description: 'Setup your profile for better experience.',
+    link: '/profile'
   },
   {
     animationData: crowdfundAnimation,
     title: 'Crowdfund',
-    description: 'Gather a fund to help people get better.' 
+    description: 'Gather a fund to help people get better.',
+    link: '/crowdfund'
   },
 ]
 

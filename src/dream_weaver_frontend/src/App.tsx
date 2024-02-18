@@ -5,14 +5,14 @@ import MainTemplate from "./templates/main-template";
 
 function App() {
   return <>
-    <MainTemplate>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage/>}/>
-          <Route path="/me" element={<MePage/>}/>
-        </Routes>
+        <MainTemplate>
+          <Routes>
+            <Route path="/" element={<HomePage/>}/>
+            <Route path="/me" element={<MePage/>}/>
+          </Routes>
+        </MainTemplate>
       </BrowserRouter>
-    </MainTemplate>
   </>
 
   // const [greeting, setGreeting] = useState('');

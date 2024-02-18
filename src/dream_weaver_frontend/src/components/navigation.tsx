@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
 import Icon from "./icon";
 
 export default function Navigation() {
   return (
     <div className="w-full center">
-      <Icon/>
+        <Link to='/'>
+          <Icon/>
+        </Link>
     </div>
   )
 }
