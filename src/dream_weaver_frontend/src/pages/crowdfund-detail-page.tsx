@@ -50,7 +50,7 @@ export default function CrowdfundDetailPage() {
 </p>
 
       </Paper>
-      <div className="flex flex-col w-full gap-2">
+      <div className="flex flex-col w-full gap-3">
         <Button  type="secondary" className="py-2 bg-gray-50">Share</Button>
         <Button className="py-2">Donate</Button>
       </div>
