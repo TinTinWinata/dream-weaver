@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import DonatePage from "./pages/donate-page";
 import HomePage from "./pages/home-page";
 import MePage from "./pages/me-page/me-page";
 import MainTemplate from "./templates/main-template";
@@ -10,6 +11,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage/>}/>
             <Route path="/me" element={<MePage/>}/>
+            <Route path="/donate/:name" element={<DonatePage/>}/>
           </Routes>
         </MainTemplate>
       </BrowserRouter>

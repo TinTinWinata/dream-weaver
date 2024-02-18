@@ -10,6 +10,6 @@ type TPaper = TChildrenProps & {
 
 export default function Paper({props, children, style, className, hoverable = false}: TPaper) {
   return (
-    <div  {...props} style={style} className={`${hoverable && 'hover:bg-secondary-hover'} transition-all rounded-xl bg-secondary ${className}`} >{children}</div>
+    <div  {...props} style={style} className={`${hoverable && 'hover:bg-secondary-hover'} relative transition-all rounded-xl bg-secondary ${className}`} >{children}</div>
   )
 }
