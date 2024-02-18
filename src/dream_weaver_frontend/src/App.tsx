@@ -1,7 +1,20 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomePage from "./pages/home-page";
+import MePage from "./pages/me-page/me-page";
+import MainTemplate from "./templates/main-template";
 
 function App() {
-  const foo: string = 'Hello World'
-  return <p>{foo}</p>
+  return <>
+    <MainTemplate>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage/>}/>
+          <Route path="/me" element={<MePage/>}/>
+        </Routes>
+      </BrowserRouter>
+    </MainTemplate>
+  </>
+
   // const [greeting, setGreeting] = useState('');
 
   // function handleSubmit(event) {
