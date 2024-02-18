@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { UserProvider } from "./contexts/user-context";
 import CashflowPage from "./pages/cashflow-page";
 import CreateCrowdfundPage from "./pages/create-crowdfund-page";
 import CrowdfundDetailPage from "./pages/crowdfund-detail-page";
@@ -13,6 +14,7 @@ import MainTemplate from "./templates/main-template";
 function App() {
   return <>
       <BrowserRouter>
+       <UserProvider>
         <MainTemplate>
           <Routes>
             <Route path="/" element={<HomePage/>}/>
@@ -26,6 +28,7 @@ function App() {
             <Route path="/register" element={<RegisterPage/>}/>
           </Routes>
         </MainTemplate>
+       </UserProvider>
       </BrowserRouter>
   </>
 
