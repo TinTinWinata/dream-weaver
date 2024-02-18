@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CashflowPage from "./pages/cashflow-page";
+import CrowdfundDetailPage from "./pages/crowdfund-detail-page";
 import CrowdfundPage from "./pages/crowdfund-page/crowdfund-page";
 import DonatePage from "./pages/donate-page";
 import HomePage from "./pages/home-page";
@@ -18,6 +19,7 @@ function App() {
             <Route path="/donate/:name" element={<DonatePage/>}/>
             <Route path="/profile" element={<ProfilePage/>}/>
             <Route path="/crowdfund" element={<CrowdfundPage/>}/>
+            <Route path="/crowdfund/:id" element={<CrowdfundDetailPage/>}/>
           </Routes>
         </MainTemplate>
       </BrowserRouter>
