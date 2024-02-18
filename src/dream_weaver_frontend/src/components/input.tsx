@@ -2,13 +2,13 @@ import { DetailedHTMLProps, ReactNode } from "react";
 
 type TInput = {
   title: string;
-  placeholder: string;
+  placeholder?: string;
   props?: DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
   children?: ReactNode
   type?: string;
 }
 
-export default function Input({ type='text', title, placeholder, props, children} : TInput) {
+export default function Input({  title, placeholder, props, children} : TInput) {
   return (
     <div className="flex flex-col gap-1">
       <h1>{title}</h1>

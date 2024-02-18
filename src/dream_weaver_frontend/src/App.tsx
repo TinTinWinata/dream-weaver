@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CashflowPage from "./pages/cashflow-page";
+import CreateCrowdfundPage from "./pages/create-crowdfund-page";
 import CrowdfundDetailPage from "./pages/crowdfund-detail-page";
 import CrowdfundPage from "./pages/crowdfund-page/crowdfund-page";
 import DonatePage from "./pages/donate-page";
@@ -20,6 +21,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage/>}/>
             <Route path="/crowdfund" element={<CrowdfundPage/>}/>
             <Route path="/crowdfund/:id" element={<CrowdfundDetailPage/>}/>
+            <Route path="/create-crowdfund" element={<CreateCrowdfundPage/>}/>
           </Routes>
         </MainTemplate>
       </BrowserRouter>
