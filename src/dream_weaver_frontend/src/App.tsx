@@ -3,6 +3,7 @@ import CashflowPage from "./pages/cashflow-page";
 import DonatePage from "./pages/donate-page";
 import HomePage from "./pages/home-page";
 import MePage from "./pages/me-page/me-page";
+import ProfilePage from "./pages/profile-page";
 import MainTemplate from "./templates/main-template";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
             <Route path="/me" element={<MePage/>}/>
             <Route path="/cashflow" element={<CashflowPage/>}/>
             <Route path="/donate/:name" element={<DonatePage/>}/>
+            <Route path="/profile" element={<ProfilePage/>}/>
           </Routes>
         </MainTemplate>
       </BrowserRouter>

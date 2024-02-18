@@ -12,7 +12,7 @@ export default function HomePage() {
           <div className="w-full pl-20">
             <h1 className="text-4xl uppercase font-black">Dream Weaver</h1>
             <p>Make's your dream come true</p>
-            <Link to='/login'>
+            <Link to='/me'>
               <Button className="mt-5 px-16 py-3">take me to the space</Button>
             </Link>
           </div>
