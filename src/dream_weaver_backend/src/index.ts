@@ -1,8 +1,22 @@
-import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, int, nat32, query, text, update } from 'azle';
+import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, int, int32, nat32, query, text, update } from 'azle';
 import {v4 as uuidv4} from 'uuid'
 
+
+
+const Post = Record({
+    title : text,
+    description : text,
+    currentAmount : int32,
+    target : int32,
+    imageUrl : text,
+    startDate : int,
+    endDate : int,
+    userId: Principal
+})
+
+type Post = typeof Post.tsType
+
 const User = Record({
-    id: text,
     email : text,
     username : text,
     name : text,
@@ -10,17 +24,19 @@ const User = Record({
     youtubeUrl : text,
     tiktokUrl : text,
     createdAt : int,
-    profilePicture:text
+    profilePicture:text,
+    posts: Vec(text)
 })
 type User = typeof User.tsType
 
 const ErrorVariant = Variant({
     UserNotFound : text,
-    UserAlreadyExist: text
+    UserAlreadyExist: text,
+    PostNotFound: text
 })
 
+const PostTree = StableBTreeMap<text,Post>(0)
 const UserTree = StableBTreeMap<Principal,User>(0)
-
 
 export default Canister({
     greet: query([text], text, (name) => {
@@ -32,7 +48,6 @@ export default Canister({
             return Err({UserAlreadyExist : "User with " + principal + " Already exists"})
         }
         const newUser : User = {
-            id : uuidv4(),
             username : username,
             email : email,
             name : "",
@@ -40,7 +55,8 @@ export default Canister({
             createdAt : BigInt(Date.now()),
             profilePicture: "",
             tiktokUrl : "",
-            youtubeUrl : ""
+            youtubeUrl : "",
+            posts: []
         }
         UserTree.insert(principal,newUser)
         return Ok(newUser)
@@ -51,5 +67,46 @@ export default Canister({
             return Ok(user.Some)
         }
         return Err({UserNotFound : "There is no user with this principal"})
-    })
+    }),
+    createPost: update([text, text, int32, int32, text, int, int, Principal], Result(Post,  ErrorVariant), (title: string, description: string, currentAmount: number, target: number, imageUrl: text, startDate: int, endDate: int, userId: Principal) => {
+        const postId = uuidv4()
+        const user = UserTree.get(userId)
+        if(user.Some == undefined) {
+            return Err({UserNotFound : "User with " + userId + " not found"})
+        }
+        user.Some.posts.push(postId)
+        const newPost: Post = {
+            title: title,
+            description: description,
+            currentAmount: currentAmount,
+            target: target,
+            imageUrl: imageUrl,
+            startDate: startDate,
+            endDate: endDate,
+            userId: userId
+        }
+        PostTree.insert(postId, newPost)
+        return Ok(newPost)
+    }),
+    getPost : query([text], Result(Post, ErrorVariant), (postId : text)=>{
+        const post = PostTree.get(postId)
+        if(post.Some){
+            return Ok(post.Some)
+        }
+        return Err({PostNotFound : "There is no post with this id"})
+    }),
+    getUserPosts: query([Principal], Result(Vec(Post), ErrorVariant), (userId: Principal) => {
+        const posts : Vec<Post> = []
+        const user = UserTree.get(userId)
+        if(user.Some == undefined) {
+            return Err({UserNotFound : "User with " + userId + " not found"})
+        }
+        user.Some.posts.forEach(postId => {
+            const post = PostTree.get(postId)
+            if(post.Some) {
+                posts.push(post.Some)
+            }
+        });
+        return Ok(posts)
+    }) 
 })
