@@ -100185,7 +100185,6 @@ var Principal4 = class _Principal {
 };
 // src/dream_weaver_backend/src/index.ts
 var User = Record2({
-    id: text,
     email: text,
     username: text,
     name: text,
@@ -100197,9 +100196,12 @@ var User = Record2({
 });
 var ErrorVariant = Variant2({
     UserNotFound: text,
-    UserAlreadyExist: text
+    UserAlreadyExist: text,
+    UsernameOrEmailIsNotValid: text
 });
 var UserTree = StableBTreeMap(0);
+var UserIndexUsername = StableBTreeMap(1);
+var UserIndexEmail = StableBTreeMap(2);
 var src_default = Canister({
     greet: query([
         text
@@ -100211,6 +100213,13 @@ var src_default = Canister({
         text,
         Principal3
     ], Result(User, ErrorVariant), (username, email, principal)=>{
+        const checkUsername = UserIndexUsername.get(username);
+        const checkEmail = UserIndexEmail.get(email);
+        if (checkUsername.Some || checkEmail.Some) {
+            return Err({
+                UsernameOrEmailIsNotValid: "Username or Email is not Valid"
+            });
+        }
         const checkUser = UserTree.get(principal);
         if (checkUser.Some) {
             return Err({
@@ -100218,7 +100227,6 @@ var src_default = Canister({
             });
         }
         const newUser = {
-            id: v4_default(),
             username,
             email,
             name: "",
@@ -100228,19 +100236,10 @@ var src_default = Canister({
             tiktokUrl: "",
             youtubeUrl: ""
         };
+        UserIndexEmail.insert(email, principal);
+        UserIndexUsername.insert(username, principal);
         UserTree.insert(principal, newUser);
         return Ok(newUser);
-    }),
-    getUser: query([
-        Principal3
-    ], Result(User, ErrorVariant), (principal)=>{
-        const user = UserTree.get(principal);
-        if (user.Some) {
-            return Ok(user.Some);
-        }
-        return Err({
-            UserNotFound: "There is no user with this principal"
-        });
     })
 });
 // <stdin>
