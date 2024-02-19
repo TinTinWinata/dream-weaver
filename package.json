@@ -15,5 +15,8 @@
   "workspaces": [
     "src/dream_weaver_backend",
     "src/dream_weaver_frontend"
-  ]
+  ],
+  "dependencies": {
+    "@dfinity/principal": "^1.0.0"
+  }
 }
