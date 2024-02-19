@@ -2,7 +2,6 @@ import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, 
 import {v4 as uuidv4} from 'uuid'
 
 const User = Record({
-    id: text,
     email : text,
     username : text,
     name : text,
@@ -32,7 +31,7 @@ export default Canister({
     register: update([text, text, Principal],Result(User,  ErrorVariant), (username: string, email : string, principal: Principal)=>{
         const checkUsername = UserIndexUsername.get(username)
         const checkEmail = UserIndexEmail.get(email)
-        if(checkUsername.Some && checkEmail.Some){
+        if(checkUsername.Some || checkEmail.Some){
             return Err({UsernameOrEmailIsNotValid : "Username or Email is not Valid"})
         }
         const checkUser = UserTree.get(principal)
@@ -41,7 +40,6 @@ export default Canister({
             return Err({UserAlreadyExist : "User with " + principal + " Already exists"})
         }
         const newUser : User = {
-            id : uuidv4(),
             username : username,
             email : email,
             name : "",
