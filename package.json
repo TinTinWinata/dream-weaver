@@ -17,6 +17,9 @@
     "src/dream_weaver_frontend"
   ],
   "dependencies": {
-    "@dfinity/principal": "^1.0.0"
+    "@dfinity/agent": "^1.0.0",
+    "@dfinity/principal": "^1.0.0",
+    "uuid": "^9.0.1",
+    "uuidv4": "^6.2.13"
   }
 }
