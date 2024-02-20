@@ -7109,6 +7109,25 @@ __publicField(AzleInt, "_azleKind", "AzleInt");
 __publicField(AzleInt, "tsType");
 var int = AzleInt;
 
+// node_modules/azle/src/lib/candid/types/primitive/ints/int32.ts
+var AzleInt32 = class {
+  constructor() {
+    __publicField(this, "_azleKind", "AzleInt32");
+  }
+  static toBytes(data) {
+    return encode3(this, data);
+  }
+  static fromBytes(bytes3) {
+    return decode3(this, bytes3);
+  }
+  static getIdl() {
+    return idl_exports.Int32;
+  }
+};
+__publicField(AzleInt32, "_azleKind", "AzleInt32");
+__publicField(AzleInt32, "tsType");
+var int32 = AzleInt32;
+
 // node_modules/azle/src/lib/candid/types/primitive/nats/nat16.ts
 var AzleNat16 = class {
   constructor() {
@@ -24972,6 +24991,16 @@ var DidVisitor = class extends idl_exports.Visitor {
 };
 
 // src/dream_weaver_backend/src/index.ts
+var Post = Record2({
+  title: text,
+  description: text,
+  currentAmount: int32,
+  target: int32,
+  imageUrl: text,
+  startDate: int,
+  endDate: int,
+  userId: Principal3
+});
 var User = Record2({
   email: text,
   username: text,
@@ -24980,16 +25009,26 @@ var User = Record2({
   youtubeUrl: text,
   tiktokUrl: text,
   createdAt: int,
-  profilePicture: text
+  profilePicture: text,
+  posts: Vec2(text)
 });
 var ErrorVariant = Variant2({
   UserNotFound: text,
   UserAlreadyExist: text,
-  UsernameOrEmailIsNotValid: text
+  UsernameOrEmailIsNotValid: text,
+  PostNotFound: text
 });
+var PostTree = StableBTreeMap(0);
 var UserTree = StableBTreeMap(0);
 var UserIndexUsername = StableBTreeMap(1);
 var UserIndexEmail = StableBTreeMap(2);
+function UserMiddleware(userId, handler) {
+  const user = UserTree.get(userId);
+  if (!user.Some) {
+    return Err({ UserNotFound: "User with " + userId + " not found" });
+  }
+  return handler(user.Some);
+}
 var src_default = Canister({
   greet: query([text], text, (name) => {
     return `Hello, ${name}!`;
@@ -25012,7 +25051,8 @@ var src_default = Canister({
       createdAt: BigInt(Date.now()),
       profilePicture: "",
       tiktokUrl: "",
-      youtubeUrl: ""
+      youtubeUrl: "",
+      posts: []
     };
     UserIndexEmail.insert(email, principal);
     UserIndexUsername.insert(username, principal);
@@ -25025,6 +25065,45 @@ var src_default = Canister({
       return Ok(user.Some);
     }
     return Err({ UserNotFound: "There is no user with this principal" });
+  }),
+  createPost: update([text, text, int32, int32, text, int, int, Principal3], Result(Post, ErrorVariant), (title2, description, currentAmount, target, imageUrl, startDate, endDate, userId) => {
+    const postId = v4_default();
+    const user = UserTree.get(userId);
+    if (user.Some == void 0) {
+      return Err({ UserNotFound: "User with " + userId + " not found" });
+    }
+    user.Some.posts.push(postId);
+    const newPost = {
+      title: title2,
+      description,
+      currentAmount,
+      target,
+      imageUrl,
+      startDate,
+      endDate,
+      userId
+    };
+    PostTree.insert(postId, newPost);
+    return Ok(newPost);
+  }),
+  getPost: query([text], Result(Post, ErrorVariant), (postId) => {
+    const post = PostTree.get(postId);
+    if (post.Some) {
+      return Ok(post.Some);
+    }
+    return Err({ PostNotFound: "There is no post with this id" });
+  }),
+  getUserPosts: query([Principal3], Result(Vec2(Post), ErrorVariant), (userId) => {
+    return UserMiddleware(userId, (user) => {
+      const posts = [];
+      user.posts.forEach((postId) => {
+        const post = PostTree.get(postId);
+        if (post.Some) {
+          posts.push(post.Some);
+        }
+      });
+      return Ok(posts);
+    });
   })
 });
 

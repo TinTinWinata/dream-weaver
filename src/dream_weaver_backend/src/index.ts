@@ -36,10 +36,24 @@ const ErrorVariant = Variant({
     PostNotFound: text
 })
 
+type ErrorVariant  = typeof ErrorVariant.tsType
+
 const PostTree = StableBTreeMap<text,Post>(0)
 const UserTree = StableBTreeMap<Principal,User>(0)
 const UserIndexUsername = StableBTreeMap<text, Principal>(1)
 const UserIndexEmail = StableBTreeMap<text, Principal>(2)
+
+function UserMiddleware<T>(
+    userId: Principal,
+    handler: (user : User) => Result<T, ErrorVariant>
+): Result<T, ErrorVariant> {
+    const user = UserTree.get(userId);
+    if (!user.Some) {
+        return Err({ UserNotFound: "User with " + userId + " not found" });
+    }
+    return handler(user.Some);
+}
+
 
 
 export default Canister({
@@ -108,17 +122,15 @@ export default Canister({
         return Err({PostNotFound : "There is no post with this id"})
     }),
     getUserPosts: query([Principal], Result(Vec(Post), ErrorVariant), (userId: Principal) => {
-        const posts : Vec<Post> = []
-        const user = UserTree.get(userId)
-        if(user.Some == undefined) {
-            return Err({UserNotFound : "User with " + userId + " not found"})
-        }
-        user.Some.posts.forEach(postId => {
-            const post = PostTree.get(postId)
-            if(post.Some) {
-                posts.push(post.Some)
-            }
-        });
-        return Ok(posts)
-    }) 
+        return UserMiddleware(userId, (user : User)=>{
+            const posts : Vec<Post> = []
+            user.posts.forEach(postId => {
+                const post = PostTree.get(postId)
+                if(post.Some) {
+                    posts.push(post.Some)
+                }
+            });
+            return Ok(posts)
+        })
+    }),
 })

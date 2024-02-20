@@ -1,5 +1,0 @@
-service: () -> {
-    getUser: (principal) -> (variant {Ok:record {bio:text; username:text; name:text; createdAt:int; email:text; profilePicture:text; youtubeUrl:text; tiktokUrl:text}; Err:variant {UsernameOrEmailIsNotValid:text; UserAlreadyExist:text; UserNotFound:text}}) query;
-    greet: (text) -> (text) query;
-    register: (text, text, principal) -> (variant {Ok:record {bio:text; username:text; name:text; createdAt:int; email:text; profilePicture:text; youtubeUrl:text; tiktokUrl:text}; Err:variant {UsernameOrEmailIsNotValid:text; UserAlreadyExist:text; UserNotFound:text}});
-}
