@@ -35,8 +35,13 @@ export function UserProvider({ children }: TChildrenProps) {
       const response = await dream_weaver_backend.getUser(
         authClient.getIdentity().getPrincipal()
       );
-      console.log(response);
-      update(authClient);
+      console.log(response.Err);
+
+      if (response.Err) {
+        authClient.logout();
+      } else {
+        update(authClient);
+      }
     }
   };
 

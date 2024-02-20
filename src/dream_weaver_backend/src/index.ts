@@ -1,7 +1,10 @@
-import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, int, int32, query, text, update } from 'azle';
+import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, ic, init, int, int32, query, serialize, text, update } from 'azle';
 import {v4 as uuidv4} from 'uuid'
-
-
+import {Address, Ledger, Tokens, binaryAddressFromAddress} from 'azle/canisters/ledger'
+import {config} from 'dotenv'
+let icpCanister: typeof Ledger;
+config()
+icpCanister = Ledger(Principal.fromText(getIcpCanisterPrincipal()));
 
 const Post = Record({
     title : text,
@@ -49,14 +52,17 @@ function UserMiddleware<T>(
 ): Result<T, ErrorVariant> {
     const user = UserTree.get(userId);
     if (!user.Some) {
-        return Err({ UserNotFound: "User with " + userId + " not found" });
+        return Err({ UserNotFound: "There is no user with this principal"});
     }
     return handler(user.Some);
 }
 
-
-
 export default Canister({
+    init: init([], () => {
+        ic.print(getIcpCanisterPrincipal())
+        ic.print(icpCanister)
+        
+    }),
     greet: query([text], text, (name) => {
         return `Hello, ${name}!`;
     }),
@@ -88,31 +94,30 @@ export default Canister({
         return Ok(newUser)
     }),
     getUser : query([Principal], Result(User, ErrorVariant), (principal : Principal)=>{
-        const user = UserTree.get(principal)
-        if(user.Some){
-            return Ok(user.Some)
-        }
-        return Err({UserNotFound : "There is no user with this principal"})
+        ic.print("Masuk")
+        return UserMiddleware(principal, (user: User)=>{
+            ic.print("Lewat Middleware")
+            return Ok(user)
+        })
     }),
     createPost: update([text, text, int32, int32, text, int, int, Principal], Result(Post,  ErrorVariant), (title: string, description: string, currentAmount: number, target: number, imageUrl: text, startDate: int, endDate: int, userId: Principal) => {
-        const postId = uuidv4()
-        const user = UserTree.get(userId)
-        if(user.Some == undefined) {
-            return Err({UserNotFound : "User with " + userId + " not found"})
-        }
-        user.Some.posts.push(postId)
-        const newPost: Post = {
-            title: title,
-            description: description,
-            currentAmount: currentAmount,
-            target: target,
-            imageUrl: imageUrl,
-            startDate: startDate,
-            endDate: endDate,
-            userId: userId
-        }
-        PostTree.insert(postId, newPost)
-        return Ok(newPost)
+        return UserMiddleware(userId, (user: User)=>{
+            const postId = uuidv4()
+            user.posts.push(postId)
+            const newPost: Post = {
+                title: title,
+                description: description,
+                currentAmount: currentAmount,
+                target: target,
+                imageUrl: imageUrl,
+                startDate: startDate,
+                endDate: endDate,
+                userId: userId
+            }
+            PostTree.insert(postId, newPost)
+            return Ok(newPost)
+        })
+        
     }),
     getPost : query([text], Result(Post, ErrorVariant), (postId : text)=>{
         const post = PostTree.get(postId)
@@ -133,4 +138,22 @@ export default Canister({
             return Ok(posts)
         })
     }),
+    getAccountBalance: update([Address], Tokens, async (address) => {
+        ic.print(getIcpCanisterPrincipal())
+        return await ic.call(icpCanister.account_balance, {
+            args: [
+                {
+                    account: binaryAddressFromAddress(address)
+                }
+            ]
+        });
+        
+    }),
 })
+function getIcpCanisterPrincipal(): string {
+    if (process.env.ICP_CANISTER_PRINCIPAL !== undefined) {
+        return process.env.ICP_CANISTER_PRINCIPAL;
+    } else {
+        throw new Error('process.env.ICP_CANISTER_PRINCIPAL is undefined');
+    }
+}
