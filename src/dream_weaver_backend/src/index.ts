@@ -1,4 +1,4 @@
-import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, int, int32, nat32, query, text, update } from 'azle';
+import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, int, int32, query, text, update } from 'azle';
 import {v4 as uuidv4} from 'uuid'
 
 
@@ -32,18 +32,28 @@ type User = typeof User.tsType
 const ErrorVariant = Variant({
     UserNotFound : text,
     UserAlreadyExist: text,
+    UsernameOrEmailIsNotValid: text,
     PostNotFound: text
 })
 
 const PostTree = StableBTreeMap<text,Post>(0)
 const UserTree = StableBTreeMap<Principal,User>(0)
+const UserIndexUsername = StableBTreeMap<text, Principal>(1)
+const UserIndexEmail = StableBTreeMap<text, Principal>(2)
+
 
 export default Canister({
     greet: query([text], text, (name) => {
         return `Hello, ${name}!`;
     }),
     register: update([text, text, Principal],Result(User,  ErrorVariant), (username: string, email : string, principal: Principal)=>{
+        const checkUsername = UserIndexUsername.get(username)
+        const checkEmail = UserIndexEmail.get(email)
+        if(checkUsername.Some || checkEmail.Some){
+            return Err({UsernameOrEmailIsNotValid : "Username or Email is not Valid"})
+        }
         const checkUser = UserTree.get(principal)
+        
         if(checkUser.Some){
             return Err({UserAlreadyExist : "User with " + principal + " Already exists"})
         }
@@ -58,6 +68,8 @@ export default Canister({
             youtubeUrl : "",
             posts: []
         }
+        UserIndexEmail.insert(email, principal)
+        UserIndexUsername.insert(username, principal)
         UserTree.insert(principal,newUser)
         return Ok(newUser)
     }),
