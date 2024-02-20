@@ -1,1 +1,1 @@
-{"canister_methods":{"queries":[{"name":"greet","composite":false}],"updates":[{"name":"register"}],"callbacks":{}}}
+{"canister_methods":{"queries":[{"name":"greet","composite":false},{"name":"getUser","composite":false}],"updates":[{"name":"register"}],"callbacks":{}},"env_vars":[]}
