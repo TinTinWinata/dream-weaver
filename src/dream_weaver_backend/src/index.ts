@@ -1,5 +1,5 @@
 import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, int, int32, query, text, update } from 'azle';
-import {v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -94,7 +94,7 @@ export default Canister({
         }
         return Err({UserNotFound : "There is no user with this principal"})
     }),
-    createPost: update([text, text, int32, int32, text, int, int, Principal], Result(Post,  ErrorVariant), (title: string, description: string, currentAmount: number, target: number, imageUrl: text, startDate: int, endDate: int, userId: Principal) => {
+    createPost: update([text, text, int32, text, int, int, Principal], Result(Post,  ErrorVariant), (title: string, description: string, target: number, imageUrl: text, startDate: int, endDate: int, userId: Principal) => {
         const postId = uuidv4()
         const user = UserTree.get(userId)
         if(user.Some == undefined) {
@@ -104,7 +104,7 @@ export default Canister({
         const newPost: Post = {
             title: title,
             description: description,
-            currentAmount: currentAmount,
+            currentAmount: 0,
             target: target,
             imageUrl: imageUrl,
             startDate: startDate,
