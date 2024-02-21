@@ -1,23 +1,28 @@
-use wasmedge_quickjs::{Context, JsFn, JsValue};
+use std::convert::TryInto;
+
+use quickjs_wasm_rs::{to_qjs_value, CallbackArg, JSContextRef, JSValue, JSValueRef};
 
 use crate::STABLE_B_TREE_MAPS;
 
-pub struct NativeFunction;
-impl JsFn for NativeFunction {
-    fn call(context: &mut Context, this_val: JsValue, argv: &[JsValue]) -> JsValue {
-        let memory_id_string = if let JsValue::String(js_string) = argv.get(0).unwrap() {
-            js_string.to_string()
-        } else {
-            panic!("conversion from JsValue to JsString failed")
-        };
-        let memory_id: u8 = memory_id_string.parse().unwrap();
+pub fn native_function<'a>(
+    context: &'a JSContextRef,
+    _this: &CallbackArg,
+    args: &[CallbackArg],
+) -> Result<JSValueRef<'a>, anyhow::Error> {
+    let memory_id_string: String = args
+        .get(0)
+        .expect("stable_b_tree_map_is_empty argument 0 is undefined")
+        .to_js_value()?
+        .try_into()?;
+    let memory_id: u8 = memory_id_string.parse()?;
 
-        STABLE_B_TREE_MAPS
-            .with(|stable_b_tree_maps| {
-                let stable_b_tree_maps = stable_b_tree_maps.borrow();
+    let result_js_value: JSValue = STABLE_B_TREE_MAPS
+        .with(|stable_b_tree_maps| {
+            let stable_b_tree_maps = stable_b_tree_maps.borrow();
 
-                stable_b_tree_maps[&memory_id].is_empty()
-            })
-            .into()
-    }
+            stable_b_tree_maps[&memory_id].is_empty()
+        })
+        .into();
+
+    to_qjs_value(&context, &result_js_value)
 }

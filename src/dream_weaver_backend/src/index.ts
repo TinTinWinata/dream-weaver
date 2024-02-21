@@ -114,6 +114,12 @@ export default Canister({
         PostTree.insert(postId, newPost)
         return Ok(newPost)
     }),
+    getPosts: query([Principal], Result(Vec(Post), ErrorVariant), (userId: Principal) => {
+        return UserMiddleware(userId, (user : User)=>{
+            const posts: Vec<Post> = PostTree.values();
+            return Ok(posts);
+        })
+    }),
     getPost : query([text], Result(Post, ErrorVariant), (postId : text)=>{
         const post = PostTree.get(postId)
         if(post.Some){

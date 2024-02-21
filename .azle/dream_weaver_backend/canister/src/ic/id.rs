@@ -1,8 +1,10 @@
-use wasmedge_quickjs::{Context, JsFn, JsValue};
+use quickjs_wasm_rs::{CallbackArg, JSContextRef, JSValueRef};
 
-pub struct NativeFunction;
-impl JsFn for NativeFunction {
-    fn call(context: &mut Context, this_val: JsValue, argv: &[JsValue]) -> JsValue {
-        context.new_string(&ic_cdk::id().to_text()).into()
-    }
+pub fn native_function<'a>(
+    context: &'a JSContextRef,
+    _this: &CallbackArg,
+    _args: &[CallbackArg],
+) -> Result<JSValueRef<'a>, anyhow::Error> {
+    let canister_id = ic_cdk::id().to_text();
+    context.value_from_str(&canister_id)
 }

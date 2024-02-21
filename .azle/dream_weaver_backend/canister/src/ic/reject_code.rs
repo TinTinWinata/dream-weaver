@@ -1,20 +1,23 @@
-use wasmedge_quickjs::{Context, JsFn, JsValue};
+use quickjs_wasm_rs::{to_qjs_value, CallbackArg, JSContextRef, JSValue, JSValueRef};
 
-pub struct NativeFunction;
-impl JsFn for NativeFunction {
-    fn call(context: &mut Context, this_val: JsValue, argv: &[JsValue]) -> JsValue {
-        let reject_code = ic_cdk::api::call::reject_code();
+pub fn native_function<'a>(
+    context: &'a JSContextRef,
+    _this: &CallbackArg,
+    _args: &[CallbackArg],
+) -> Result<JSValueRef<'a>, anyhow::Error> {
+    let reject_code = ic_cdk::api::call::reject_code();
 
-        let reject_code_number = match reject_code {
-            ic_cdk::api::call::RejectionCode::NoError => 0,
-            ic_cdk::api::call::RejectionCode::SysFatal => 1,
-            ic_cdk::api::call::RejectionCode::SysTransient => 2,
-            ic_cdk::api::call::RejectionCode::DestinationInvalid => 3,
-            ic_cdk::api::call::RejectionCode::CanisterReject => 4,
-            ic_cdk::api::call::RejectionCode::CanisterError => 5,
-            ic_cdk::api::call::RejectionCode::Unknown => 6,
-        };
+    let reject_code_as_u8 = match reject_code {
+        ic_cdk::api::call::RejectionCode::NoError => 0,
+        ic_cdk::api::call::RejectionCode::SysFatal => 1,
+        ic_cdk::api::call::RejectionCode::SysTransient => 2,
+        ic_cdk::api::call::RejectionCode::DestinationInvalid => 3,
+        ic_cdk::api::call::RejectionCode::CanisterReject => 4,
+        ic_cdk::api::call::RejectionCode::CanisterError => 5,
+        ic_cdk::api::call::RejectionCode::Unknown => 6,
+    };
 
-        context.new_string(&reject_code_number.to_string()).into()
-    }
+    let reject_code_as_js_value: JSValue = reject_code_as_u8.into();
+
+    to_qjs_value(&context, &reject_code_as_js_value)
 }
