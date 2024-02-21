@@ -7,7 +7,7 @@ import { TUser } from "../types/user-type";
 import { toastError } from "../utils/toast";
 
 type TUserContext = {
-  auth: (username: string, email: string) => Promise<void>;
+  auth: (username: string, email: string, callback?: () => void) => Promise<void>;
   user: TUser | undefined;
   logout: () => Promise<void>;
 };
@@ -28,11 +28,15 @@ export function UserProvider({ children }: TChildrenProps) {
     }
   };
 
+  useEffect(()=>{
+    console.log('User : ', user)
+  }, [user])
+
   useEffect(() => {
     init();
   }, []);
 
-  const update = async (authClient: AuthClient, name?: string, email?: string) => {
+  const update = async (authClient: AuthClient, name?: string, email?: string, callback?: ()=>void) => {
     setAuthClient(authClient);
 
     const getUserResponse = await dream_weaver_backend.getUser(
@@ -45,6 +49,7 @@ export function UserProvider({ children }: TChildrenProps) {
         email,
         authClient.getIdentity().getPrincipal()
       );
+      console.log('Register Response : ', registerResponse)
       if('Ok' in registerResponse){
         setUser(registerResponse.Ok)
       }else{
@@ -54,13 +59,12 @@ export function UserProvider({ children }: TChildrenProps) {
       setUser(getUserResponse.Ok)
     }
 
-    setUser(user);
+    if(callback) callback();
   };
-  const auth = async (name: string, email: string) => {
+  const auth = async (name: string, email: string, callback?: () => void) => {
     if (!authClient) return;
     const onSuccessCallback = async () => {
-      console.log('Callback : ', name, email)
-      update(authClient, name, email)
+      update(authClient, name, email, callback)
     }
     authClient.login({
       onSuccess: onSuccessCallback,

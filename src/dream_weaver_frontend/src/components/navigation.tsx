@@ -11,7 +11,7 @@ export default function Navigation() {
   const { auth, user , logout} = useUser();
   const handleLogin = () => user ?  logout() : auth('', '') 
   const [hover, setHover] = useState<boolean>(false);
-  console.log('user : ', user)
+  // console.log('user : ', user)
   return (
     <div 
       className="relative z-50 cursor-pointer w-full center h-28"

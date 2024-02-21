@@ -1,17 +1,27 @@
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/button";
 import Input from "../components/input";
 import Paper from "../components/paper";
+import useLoading from "../contexts/loading-context";
 import useUser from "../contexts/user-context";
 import { TRegisterPayload } from "../types/register-payload";
+import { toastSuccess } from "../utils/toast";
 
 export default function RegisterPage() {
   const { auth } = useUser();
+  const { setLoading } = useLoading();
 
   const {register, handleSubmit, formState: { errors } } = useForm<TRegisterPayload>();
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<TRegisterPayload> = ({name, email }) => {
-    auth(name, email)
+    setLoading(true);
+    auth(name, email, () => {
+      setLoading(false) 
+      toastSuccess('Register succesfully')
+      navigate('/me')
+    })
   }
 
   return (
