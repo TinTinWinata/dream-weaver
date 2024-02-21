@@ -77,7 +77,7 @@ export default Canister({
             name : "",
             bio : "There is nothing here ...",
             createdAt : BigInt(Date.now()),
-            profilePicture: "",
+            profilePicture: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
             tiktokUrl : "",
             youtubeUrl : "",
             posts: []

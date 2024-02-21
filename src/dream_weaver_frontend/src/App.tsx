@@ -1,4 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { LoadingProvider } from "./contexts/loading-context";
 import { UserProvider } from "./contexts/user-context";
 import CashflowPage from "./pages/cashflow-page";
@@ -15,23 +17,24 @@ import MainTemplate from "./templates/main-template";
 function App() {
   return <>
       <BrowserRouter>
-      <LoadingProvider>
-        <UserProvider>
-          <MainTemplate>
-            <Routes>
-              <Route path="/" element={<HomePage/>}/>
-              <Route path="/me" element={<MePage/>}/>
-              <Route path="/cashflow" element={<CashflowPage/>}/>
-              <Route path="/donate/:name" element={<DonatePage/>}/>
-              <Route path="/profile" element={<ProfilePage/>}/>
-              <Route path="/crowdfund" element={<CrowdfundPage/>}/>
-              <Route path="/crowdfund/:id" element={<CrowdfundDetailPage/>}/>
-              <Route path="/create-crowdfund" element={<CreateCrowdfundPage/>}/>
-              <Route path="/register" element={<RegisterPage/>}/>
-            </Routes>
-          </MainTemplate>
-        </UserProvider>
-      </LoadingProvider>
+      <ToastContainer/>
+        <LoadingProvider>
+          <UserProvider>
+            <MainTemplate>
+              <Routes>
+                <Route path="/" element={<HomePage/>}/>
+                <Route path="/me" element={<MePage/>}/>
+                <Route path="/cashflow" element={<CashflowPage/>}/>
+                <Route path="/donate/:name" element={<DonatePage/>}/>
+                <Route path="/profile" element={<ProfilePage/>}/>
+                <Route path="/crowdfund" element={<CrowdfundPage/>}/>
+                <Route path="/crowdfund/:id" element={<CrowdfundDetailPage/>}/>
+                <Route path="/create-crowdfund" element={<CreateCrowdfundPage/>}/>
+                <Route path="/register" element={<RegisterPage/>}/>
+              </Routes>
+            </MainTemplate>
+          </UserProvider>
+        </LoadingProvider>
       </BrowserRouter>
   </>
 

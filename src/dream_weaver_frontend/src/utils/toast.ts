@@ -2,35 +2,37 @@ import { Id, toast } from "react-toastify";
 
 export function toastSuccess(str: String) {
   toast.success(str, {
-    position: "bottom-left",
+    position: "bottom-right",
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
+    theme:'dark'
   });
 }
-
-export function toastError(obj: { [key: string]: string }) {
-  const errorMessage = Object.values(obj)[0];
+export function toastError(obj: { [key: string]: string } | string ) {
+  const errorMessage = typeof obj === 'string' ? obj : Object.values(obj)[0];
   toast.error(errorMessage, {
-    position: "bottom-left",
+    position: "bottom-right",
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
+    theme:'dark'
   });
 }
 
 export function toastLoading(str: string) {
   return toast.loading(str, {
-    position: "bottom-left",
+    position: "bottom-right",
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
+    theme:'dark'
   });
 }
 
@@ -45,6 +47,7 @@ export function toastUpdateSuccess(id: Id, text: string = 'Success') {
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
+    theme:'dark'
   });
 }
 export function toastUpdateFailed(id: Id, text: string = 'Failed!') {
@@ -57,5 +60,6 @@ export function toastUpdateFailed(id: Id, text: string = 'Failed!') {
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
+    theme:'dark'
   });
 }

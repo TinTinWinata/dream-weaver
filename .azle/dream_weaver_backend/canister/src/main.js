@@ -25049,7 +25049,7 @@ var src_default = Canister({
       name: "",
       bio: "There is nothing here ...",
       createdAt: BigInt(Date.now()),
-      profilePicture: "",
+      profilePicture: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
       tiktokUrl: "",
       youtubeUrl: "",
       posts: []
@@ -25085,6 +25085,12 @@ var src_default = Canister({
     };
     PostTree.insert(postId, newPost);
     return Ok(newPost);
+  }),
+  getPosts: query([Principal3], Result(Vec2(Post), ErrorVariant), (userId) => {
+    return UserMiddleware(userId, (user) => {
+      const posts = PostTree.values();
+      return Ok(posts);
+    });
   }),
   getPost: query([text], Result(Post, ErrorVariant), (postId) => {
     const post = PostTree.get(postId);

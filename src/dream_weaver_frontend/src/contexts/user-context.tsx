@@ -23,14 +23,9 @@ export function UserProvider({ children }: TChildrenProps) {
     const authClient = await AuthClient.create();
     setAuthClient(authClient);
     if (await authClient.isAuthenticated()) {
-      console.log("Authenticated!")
       update(authClient); 
     }
   };
-
-  useEffect(()=>{
-    console.log('User : ', user)
-  }, [user])
 
   useEffect(() => {
     init();
@@ -49,13 +44,16 @@ export function UserProvider({ children }: TChildrenProps) {
         email,
         authClient.getIdentity().getPrincipal()
       );
-      console.log('Register Response : ', registerResponse)
       if('Ok' in registerResponse){
         setUser(registerResponse.Ok)
       }else{
         toastError(registerResponse.Err)
       }
-    }else if('Ok' in getUserResponse){
+    }else if ('Err' in getUserResponse){
+      await authClient.logout();
+      toastError('You didn\'t have account, please register first!')
+    }
+    else if('Ok' in getUserResponse){
       setUser(getUserResponse.Ok)
     }
 
