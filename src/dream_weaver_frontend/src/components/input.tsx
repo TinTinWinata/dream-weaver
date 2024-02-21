@@ -21,11 +21,13 @@ export default function Input({errors,  title, placeholder, props, children} : T
       <h1>{title}</h1>
       <input  placeholder={placeholder} className="border border-gray-500 rounded-xl px-3 py-2 bg-transparent" {...props}/>
       {children}
-      <ErrorMessage
+      {errors && 
+          <ErrorMessage
             errors={errors}
             name={name}
             render={({ message }) => <ErrorText>{message}</ErrorText>}
           />
+        }
     </div>
   )
 }

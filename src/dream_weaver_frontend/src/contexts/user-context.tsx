@@ -1,11 +1,11 @@
 import { AuthClient } from "@dfinity/auth-client";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { dream_weaver_backend } from "../declarations/dream_weaver_backend";
 import { TChildrenProps } from "../types/children-type";
 import { TUser } from "../types/user-type";
 import { toastError } from "../utils/toast";
-
+// @ts-ignore
+import { dream_weaver_backend } from "declarations/dream_weaver_backend";
 type TUserContext = {
   auth: (username: string, email: string, callback?: () => void) => Promise<void>;
   user: TUser | undefined;
