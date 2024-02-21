@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { dream_weaver_backend } from "../declarations/dream_weaver_backend";
 import { TChildrenProps } from "../types/children-type";
 import { TUser } from "../types/user-type";
+import { toastError } from "../utils/toast";
 
 type TUserContext = {
   auth: (username: string, email: string) => Promise<void>;
@@ -38,10 +39,6 @@ export function UserProvider({ children }: TChildrenProps) {
       authClient.getIdentity().getPrincipal()
     );
 
-    console.log('Get user response : ',getUserResponse)
-    console.log('Name : ', name)
-    console.log('Email : ', email)
-
     if('Err' in getUserResponse && 'UserNotFound' in getUserResponse.Err && name && email){
       const registerResponse = await dream_weaver_backend.register(
         name,
@@ -49,25 +46,24 @@ export function UserProvider({ children }: TChildrenProps) {
         authClient.getIdentity().getPrincipal()
       );
       if('Ok' in registerResponse){
-        console.log('reigster user : ', registerResponse.Ok)
         setUser(registerResponse.Ok)
+      }else{
+        toastError(registerResponse.Err)
       }
     }else if('Ok' in getUserResponse){
-      console.log('reigster user : ', getUserResponse.Ok)
       setUser(getUserResponse.Ok)
     }
 
-    console.log('User : ', user)
     setUser(user);
-
-    navigate("/me");
   };
   const auth = async (name: string, email: string) => {
     if (!authClient) return;
+    const onSuccessCallback = async () => {
+      console.log('Callback : ', name, email)
+      update(authClient, name, email)
+    }
     authClient.login({
-      onSuccess: async () => {
-        update(authClient,name, email);
-      },
+      onSuccess: onSuccessCallback,
     });
   };
   const logout = async () => {

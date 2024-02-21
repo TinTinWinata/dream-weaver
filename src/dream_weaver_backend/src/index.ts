@@ -64,7 +64,7 @@ export default Canister({
         const checkUsername = UserIndexUsername.get(username)
         const checkEmail = UserIndexEmail.get(email)
         if(checkUsername.Some || checkEmail.Some){
-            return Err({UsernameOrEmailIsNotValid : "Username or Email is not Valid"})
+            return Err({UsernameOrEmailIsNotValid : "Username or Email is already exists"})
         }
         const checkUser = UserTree.get(principal)
         

@@ -1,4 +1,3 @@
-import { ErrorMessage } from "@hookform/error-message";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Button from "../components/button";
 import Input from "../components/input";
@@ -12,8 +11,6 @@ export default function RegisterPage() {
   const {register, handleSubmit, formState: { errors } } = useForm<TRegisterPayload>();
 
   const onSubmit: SubmitHandler<TRegisterPayload> = ({name, email }) => {
-    console.log('Registering Name : ', name)
-    console.log('Registering Email : ', email)
     auth(name, email)
   }
 
@@ -25,22 +22,14 @@ export default function RegisterPage() {
           <Input
             title="Email"
             placeholder="tintin6892@gmail.com"
-            props={{ ...register('email', {required: true}) }}
-          />
-          <ErrorMessage
+            props={{ ...register('email', {required: 'Email must required to register', minLength: {value: 3, message: 'Email must more than 3 characters'}}) }}
             errors={errors}
-            name="email"
-            render={({ message }) => <p className="text-white">{message}</p>}
           />
           <Input
             title="Name"
             placeholder="tintinwinata"
-            props={{ ...register('name', {required: true}) }}
-          />
-          <ErrorMessage
+            props={{ ...register('name', {required: 'Name must required to register', minLength: {value: 3, message: 'Name must more than 3 characters'}}) }}
             errors={errors}
-            name="name"
-            render={({ message }) => <p className="text-white">{message}</p>}
           />
           <Button className="py-2.5 mt-2">Create Account</Button>
         </form>
@@ -48,3 +37,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+
