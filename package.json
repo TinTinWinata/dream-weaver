@@ -19,6 +19,7 @@
   "dependencies": {
     "@dfinity/agent": "^1.0.0",
     "@dfinity/principal": "^1.0.0",
+    "react-hook-form": "^7.50.1",
     "uuid": "^9.0.1",
     "uuidv4": "^6.2.13"
   }

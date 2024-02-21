@@ -1,5 +1,8 @@
 service: () -> {
-    getUser: (principal) -> (variant {Ok:record {bio:text; username:text; name:text; createdAt:int; email:text; profilePicture:text; youtubeUrl:text; tiktokUrl:text}; Err:variant {UsernameOrEmailIsNotValid:text; UserAlreadyExist:text; UserNotFound:text}}) query;
+    createPost: (text, text, int32, int32, text, int, int, principal) -> (variant {Ok:record {title:text; endDate:int; userId:principal; description:text; imageUrl:text; target:int32; currentAmount:int32; startDate:int}; Err:variant {UsernameOrEmailIsNotValid:text; UserAlreadyExist:text; PostNotFound:text; UserNotFound:text}});
+    getPost: (text) -> (variant {Ok:record {title:text; endDate:int; userId:principal; description:text; imageUrl:text; target:int32; currentAmount:int32; startDate:int}; Err:variant {UsernameOrEmailIsNotValid:text; UserAlreadyExist:text; PostNotFound:text; UserNotFound:text}}) query;
+    getUser: (principal) -> (variant {Ok:record {bio:text; username:text; name:text; createdAt:int; email:text; posts:vec text; profilePicture:text; youtubeUrl:text; tiktokUrl:text}; Err:variant {UsernameOrEmailIsNotValid:text; UserAlreadyExist:text; PostNotFound:text; UserNotFound:text}}) query;
+    getUserPosts: (principal) -> (variant {Ok:vec record {title:text; endDate:int; userId:principal; description:text; imageUrl:text; target:int32; currentAmount:int32; startDate:int}; Err:variant {UsernameOrEmailIsNotValid:text; UserAlreadyExist:text; PostNotFound:text; UserNotFound:text}}) query;
     greet: (text) -> (text) query;
-    register: (text, text, principal) -> (variant {Ok:record {bio:text; username:text; name:text; createdAt:int; email:text; profilePicture:text; youtubeUrl:text; tiktokUrl:text}; Err:variant {UsernameOrEmailIsNotValid:text; UserAlreadyExist:text; UserNotFound:text}});
+    register: (text, text, principal) -> (variant {Ok:record {bio:text; username:text; name:text; createdAt:int; email:text; posts:vec text; profilePicture:text; youtubeUrl:text; tiktokUrl:text}; Err:variant {UsernameOrEmailIsNotValid:text; UserAlreadyExist:text; PostNotFound:text; UserNotFound:text}});
 }

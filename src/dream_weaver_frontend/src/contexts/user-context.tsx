@@ -3,10 +3,8 @@ import { AuthClient } from "@dfinity/auth-client";
 import { Principal } from "@dfinity/principal";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { dream_weaver_backend } from "../declarations/dream_weaver_backend";
 import { TChildrenProps } from "../types/children-type";
-//@ts-ignore
-import { dream_weaver_backend } from "declarations/dream_weaver_backend";
-
 type User = {
   identity: Identity;
   principal: Principal;
