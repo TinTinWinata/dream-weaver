@@ -2,8 +2,10 @@ import Button from "../components/button";
 import Input from "../components/input";
 import Paper from "../components/paper";
 import TextArea from "../components/text-area";
+import useUser from "../contexts/user-context";
 
 export default function ProfilePage() {
+  const {user} = useUser();
   return (
     <div className="flex flex-col gap-5">
       <div className="flex gap-3">
@@ -11,7 +13,7 @@ export default function ProfilePage() {
             <div className="center">
               <img src="/assets/profile.png" className="w-32" alt="Profile" />
             </div>
-            <h2 className="font-bold text-3xl">TinTin Winata</h2>
+            <h2 className="font-bold text-3xl">{user?.name}</h2>
             <p className="text-left">
               Member since 2024
             </p>
