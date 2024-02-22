@@ -1,3 +1,4 @@
+import React from 'react';
 import { FaDiscord, FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import Icon from "../icon";
 import FooterIcon from "./footer-icon";

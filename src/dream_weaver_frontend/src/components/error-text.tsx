@@ -1,3 +1,4 @@
+import React from 'react';
 import { TChildrenProps } from "../types/children-type";
 
 export type TErrorText = TChildrenProps & {

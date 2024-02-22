@@ -1,11 +1,12 @@
+import React from "react";
 import Button from "../components/button";
 import Input from "../components/input";
 import Paper from "../components/paper";
 import TextArea from "../components/text-area";
-import useUser from "../contexts/user-context";
+import useAuth from "../contexts/auth-context";
 
 export default function ProfilePage() {
-  const {user} = useUser();
+  const {user} = useAuth();
   return (
     <div className="flex flex-col gap-5">
       <div className="flex gap-3">

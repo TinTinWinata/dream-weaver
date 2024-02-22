@@ -1,11 +1,11 @@
 import Lottie from "lottie-react";
+import React from 'react';
 import { FaHeart } from "react-icons/fa";
 import { FcAbout } from "react-icons/fc";
 import donationAnimation from '../animations/donate.json';
 import Button from "../components/button";
 import Paper from "../components/paper";
 import ProgressBar from "../components/progress-bar";
-
 
 export default function CrowdfundDetailPage() {
   return (

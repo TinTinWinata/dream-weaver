@@ -25,7 +25,8 @@ const User = Record({
     tiktokUrl : text,
     createdAt : int,
     profilePicture:text,
-    posts: Vec(text)
+    posts: Vec(text),
+    walletPrincipal: text,
 })
 type User = typeof User.tsType
 
@@ -60,7 +61,7 @@ export default Canister({
     greet: query([text], text, (name) => {
         return `Hello, ${name}!`;
     }),
-    register: update([text, text, Principal],Result(User,  ErrorVariant), (username: string, email : string, principal: Principal)=>{
+    register: update([text, text, Principal, text],Result(User,  ErrorVariant), (username: string, email : string, principal: Principal, walletPrincipal: string)=>{
         const checkUsername = UserIndexUsername.get(username)
         const checkEmail = UserIndexEmail.get(email)
         if(checkUsername.Some || checkEmail.Some){
@@ -72,6 +73,7 @@ export default Canister({
             return Err({UserAlreadyExist : "User with " + principal + " Already exists"})
         }
         const newUser : User = {
+            walletPrincipal: walletPrincipal,
             username : username,
             email : email,
             name : "",
@@ -80,7 +82,7 @@ export default Canister({
             profilePicture: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
             tiktokUrl : "",
             youtubeUrl : "",
-            posts: []
+            posts: [],
         }
         UserIndexEmail.insert(email, principal)
         UserIndexUsername.insert(username, principal)
@@ -93,6 +95,23 @@ export default Canister({
             return Ok(user.Some)
         }
         return Err({UserNotFound : "There is no user with this principal"})
+    }),
+    getUserByName: query([text], Result(User, ErrorVariant), (username : string)=>{
+        const userPrincipal = UserIndexUsername.get(username)
+        if(userPrincipal.Some){
+            const user = UserTree.get(userPrincipal.Some)
+            if(user.Some){
+                return Ok(user.Some)
+            } else {
+                return Err({UserNotFound : "User object didn\'t found on the tree"})
+            }
+        }
+        return Err({UserNotFound : "There is no user with this username"})
+    }),
+    // Test Only (to be deleted if production)
+    getUsers: query([text], Result(Vec(text), ErrorVariant), (userId: string) => {
+        const users: Vec<text> = UserIndexUsername.keys();
+        return Ok(users);
     }),
     createPost: update([text, text, int32, text, int, int, Principal], Result(Post,  ErrorVariant), (title: string, description: string, target: number, imageUrl: text, startDate: int, endDate: int, userId: Principal) => {
         const postId = uuidv4()

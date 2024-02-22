@@ -1,15 +1,14 @@
-import { useState } from "react";
+import React, { useState } from 'react';
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import useUser from "../contexts/user-context";
+import useAuth from "../contexts/auth-context";
 import Button from "./button";
 import Icon from "./icon";
 import ProxyLink from "./proxy-link";
 
-
 export default function Navigation() {
-  const { auth, user , logout} = useUser();
-  const handleLogin = () => user ?  logout() : auth('', '') 
+  const { auth, user , logout} = useAuth();
+  const handleLogin = () => user ?  logout() : auth('', '', '') 
   const [hover, setHover] = useState<boolean>(false);
   // console.log('user : ', user)
   return (
@@ -26,11 +25,11 @@ export default function Navigation() {
           <FaAngleDoubleRight className="text-gray-600 mt-2 h-8 w-8"/>
         </ProxyLink>
       </div>
-      <div className={`absolute transition-all duration-700  top-[50%] ${hover ? 'left-[53%]' : 'left-[40%]'}  translate-y-[-50%] z-10 mt-1 center gap-3 font-bold`}>
+      <div className={`absolute transition-all duration-700  top-[50%] ${hover ? 'left-[53%] opacity-100' : 'left-[40%] opacity-0'}  translate-y-[-50%] z-10 mt-1 center gap-3 font-bold`}>
         <Button onClick={handleLogin} type="secondary"  className="py-1">{user ? 'Logout' : 'Login'}</Button>
-        {user &&  <Link to='/profile' className=" px-2 py-2 center gap-1">
-          <div className="">{user.name}</div>
-          <img src={user.profilePicture} className="w-10 h-10"/>
+        {user &&  <Link to='/profile' className="rounded-md bg-gray-800 px-2 py-2 center gap-2">
+          <img src={user.profilePicture} className="w-8 h-8"/>
+          <div className="">{user.username}</div>
           </Link> }
       </div>
     </div> 

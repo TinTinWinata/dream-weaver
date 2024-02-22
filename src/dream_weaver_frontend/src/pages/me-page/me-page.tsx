@@ -1,9 +1,10 @@
+import React from 'react';
 import crowdfundAnimation from "../../animations/blockchain.json";
 import overlayAnimation from "../../animations/gaming-3.json";
 import cashflowAnimation from "../../animations/money.json";
 import settingAnimation from "../../animations/setting.json";
 import Button from "../../components/button";
-import useUser from "../../contexts/user-context";
+import useAuth from "../../contexts/auth-context";
 import MeCard, { TMeCardProps } from "./me-card";
 
 const meCards: TMeCardProps[] = [
@@ -34,7 +35,7 @@ const meCards: TMeCardProps[] = [
 ];
 
 export default function MePage() {
-  const { logout } = useUser();
+  const { logout } = useAuth();
 
   const signout = () => {
     logout();

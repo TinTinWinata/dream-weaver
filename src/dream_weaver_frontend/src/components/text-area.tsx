@@ -1,5 +1,5 @@
 import { ErrorMessage } from "@hookform/error-message";
-import { DetailedHTMLProps, ReactNode } from "react";
+import React, { DetailedHTMLProps, ReactNode } from 'react';
 import ErrorText from "./error-text";
 
 type TTextArea = {

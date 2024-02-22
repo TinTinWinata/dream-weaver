@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, createContext, useContext, useState } from "react";
+import React, { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 import ReactLoading from 'react-loading';
 import { TChildrenProps } from "../types/children-type";
 

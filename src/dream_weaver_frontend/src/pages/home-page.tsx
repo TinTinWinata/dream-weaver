@@ -1,4 +1,5 @@
 import Lottie from "lottie-react";
+import React from 'react';
 import gamingVrAnimation from '../animations/gaming-vr.json';
 import Button from "../components/button";
 import Paper from "../components/paper";

@@ -1,4 +1,5 @@
 import Lottie from 'lottie-react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Paper from '../../components/paper';
 

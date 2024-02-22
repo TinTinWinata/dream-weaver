@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import Button from "../../components/button";
 import ProxyLink from "../../components/proxy-link";
-import CrowdfundCard from "./crowdfund-card";
 import { TPost } from "../../types/post-type";
+import CrowdfundCard from "./crowdfund-card";
 //@ts-ignore
 import { dream_weaver_backend } from "declarations/dream_weaver_backend";
 

@@ -1,23 +1,23 @@
-import { useState } from "react";
-import Button from "../components/button";
-import Input from "../components/input";
-import Paper from "../components/paper";
-import TextArea from "../components/text-area";
-import Upload from "../components/upload";
-import useLoading from "../contexts/loading-context";
+import React, { useState } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
+import Button from '../components/button';
+import Input from '../components/input';
+import Paper from '../components/paper';
+import TextArea from '../components/text-area';
+import Upload from '../components/upload';
+import useLoading from "../contexts/loading-context";
 import { TCreatePostPayload } from "../types/create-post-payload";
 import { UploadFile } from "../utils/uploader";
 //@ts-ignore
 import { dream_weaver_backend } from "declarations/dream_weaver_backend";
-import useUser from "../contexts/user-context";
-import { toastError, toastSuccess } from "../utils/toast";
 import { useNavigate } from "react-router-dom";
+import useAuth from '../contexts/auth-context';
+import { toastError, toastSuccess } from "../utils/toast";
 
 export default function CreateCrowdfundPage() {
   const [selectedFile, setSelectedFile] = useState<File>();
   const { setLoading } = useLoading();
-  const { user } = useUser();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const {

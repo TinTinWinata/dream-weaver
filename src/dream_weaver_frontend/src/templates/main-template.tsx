@@ -1,6 +1,7 @@
 import Footer from "../components/footer/footer";
 import Navigation from "../components/navigation";
 import { TChildrenProps } from "../types/children-type";
+import React from 'react'
 
 export default function MainTemplate({children}: TChildrenProps) {
   return (
