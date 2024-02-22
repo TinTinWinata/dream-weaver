@@ -1,3 +1,4 @@
+import React from 'react';
 import Button from "../../components/button";
 import ProxyLink from "../../components/proxy-link";
 import CrowdfundCard from "./crowdfund-card";

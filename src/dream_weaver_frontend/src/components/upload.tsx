@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback } from 'react';
+import React, { Dispatch, SetStateAction, useCallback } from 'react';
 
 import { useDropzone } from 'react-dropzone';
 import { FaCloudArrowDown } from "react-icons/fa6";

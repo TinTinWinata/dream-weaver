@@ -1,4 +1,5 @@
 import Lottie from "lottie-react";
+import React from 'react';
 import animation from '../animations/hero.json';
 import Button from "../components/button";
 import Paper from "../components/paper";

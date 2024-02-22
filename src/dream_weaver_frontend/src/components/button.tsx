@@ -1,6 +1,6 @@
 import { CSSProperties } from "react";
 import { TChildrenProps } from "../types/children-type";
-
+import React from 'react'
 
 type TButton = TChildrenProps & {
   style? : CSSProperties;

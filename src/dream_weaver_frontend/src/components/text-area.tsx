@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, ReactNode } from "react";
+import React, { DetailedHTMLProps, ReactNode } from 'react';
 
 type TTextArea = {
   title: string;

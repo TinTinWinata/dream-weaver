@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 type TTagProps = {
   name: string;
   image: string;

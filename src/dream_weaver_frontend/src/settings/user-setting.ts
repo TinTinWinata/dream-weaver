@@ -1,6 +1,7 @@
 import { TUser } from "../types/user-type";
 
 export const DEFAULT_USER: TUser = {
+  walletPrincipal: '',
   bio: '',
   createdAt: 0n,
   email: '',

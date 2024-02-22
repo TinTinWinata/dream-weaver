@@ -1,4 +1,4 @@
-import { CSSProperties, HTMLAttributes } from 'react';
+import React, { CSSProperties, HTMLAttributes } from 'react';
 import { TChildrenProps } from '../types/children-type';
 
 type TPaper = TChildrenProps & {

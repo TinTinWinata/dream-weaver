@@ -25010,7 +25010,8 @@ var User = Record2({
   tiktokUrl: text,
   createdAt: int,
   profilePicture: text,
-  posts: Vec2(text)
+  posts: Vec2(text),
+  walletPrincipal: text
 });
 var ErrorVariant = Variant2({
   UserNotFound: text,
@@ -25033,7 +25034,7 @@ var src_default = Canister({
   greet: query([text], text, (name) => {
     return `Hello, ${name}!`;
   }),
-  register: update([text, text, Principal3], Result(User, ErrorVariant), (username, email, principal) => {
+  register: update([text, text, Principal3, text], Result(User, ErrorVariant), (username, email, principal, walletPrincipal) => {
     const checkUsername = UserIndexUsername.get(username);
     const checkEmail = UserIndexEmail.get(email);
     if (checkUsername.Some || checkEmail.Some) {
@@ -25044,6 +25045,7 @@ var src_default = Canister({
       return Err({ UserAlreadyExist: "User with " + principal + " Already exists" });
     }
     const newUser = {
+      walletPrincipal,
       username,
       email,
       name: "",
@@ -25065,6 +25067,23 @@ var src_default = Canister({
       return Ok(user.Some);
     }
     return Err({ UserNotFound: "There is no user with this principal" });
+  }),
+  getUserByName: query([text], Result(User, ErrorVariant), (username) => {
+    const userPrincipal = UserIndexUsername.get(username);
+    if (userPrincipal.Some) {
+      const user = UserTree.get(userPrincipal.Some);
+      if (user.Some) {
+        return Ok(user.Some);
+      } else {
+        return Err({ UserNotFound: "User object didn't found on the tree" });
+      }
+    }
+    return Err({ UserNotFound: "There is no user with this username" });
+  }),
+  // Test Only (to be deleted if production)
+  getUsers: query([text], Result(Vec2(text), ErrorVariant), (userId) => {
+    const users = UserIndexUsername.keys();
+    return Ok(users);
   }),
   createPost: update([text, text, int32, text, int, int, Principal3], Result(Post, ErrorVariant), (title2, description, target, imageUrl, startDate, endDate, userId) => {
     const postId = v4_default();
