@@ -23,7 +23,7 @@ export function UserProvider({ children }: TChildrenProps) {
     const authClient = await AuthClient.create();
     setAuthClient(authClient);
     if (await authClient.isAuthenticated()) {
-      update(authClient); 
+      update(authClient);
     }
   };
 
@@ -51,7 +51,7 @@ export function UserProvider({ children }: TChildrenProps) {
         toastError(registerResponse.Err)
         return;
       }
-    }else if ('Err' in getUserResponse){
+    } else if ("Err" in getUserResponse) {
       await authClient.logout();
       toastError('You didn\'t have account, please register first!')
       return;
@@ -60,7 +60,7 @@ export function UserProvider({ children }: TChildrenProps) {
       setUser(getUserResponse.Ok)
     }
 
-    if(callback) callback();
+    if (callback) callback();
   };
   const auth = async (name: string, email: string, walletPrincipal: string, callback?: () => void) => {
     if (!authClient) return;
