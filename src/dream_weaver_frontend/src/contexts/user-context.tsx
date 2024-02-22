@@ -7,7 +7,11 @@ import { toastError } from "../utils/toast";
 // @ts-ignore
 import { dream_weaver_backend } from "declarations/dream_weaver_backend";
 type TUserContext = {
-  auth: (username: string, email: string, callback?: () => void) => Promise<void>;
+  auth: (
+    username: string,
+    email: string,
+    callback?: () => void
+  ) => Promise<void>;
   user: TUser | undefined;
   logout: () => Promise<void>;
 };
@@ -23,7 +27,7 @@ export function UserProvider({ children }: TChildrenProps) {
     const authClient = await AuthClient.create();
     setAuthClient(authClient);
     if (await authClient.isAuthenticated()) {
-      update(authClient); 
+      update(authClient);
     }
   };
 
@@ -31,39 +35,54 @@ export function UserProvider({ children }: TChildrenProps) {
     init();
   }, []);
 
-  const update = async (authClient: AuthClient, name?: string, email?: string, callback?: ()=>void) => {
+  const update = async (
+    authClient: AuthClient,
+    name?: string,
+    email?: string,
+    callback?: () => void
+  ) => {
     setAuthClient(authClient);
 
     const getUserResponse = await dream_weaver_backend.getUser(
       authClient.getIdentity().getPrincipal()
     );
 
-    if('Err' in getUserResponse && 'UserNotFound' in getUserResponse.Err && name && email){
+    console.log(getUserResponse);
+
+    if (
+      "Err" in getUserResponse &&
+      "UserNotFound" in getUserResponse.Err &&
+      name &&
+      email
+    ) {
       const registerResponse = await dream_weaver_backend.register(
         name,
         email,
         authClient.getIdentity().getPrincipal()
       );
-      if('Ok' in registerResponse){
-        setUser(registerResponse.Ok)
-      }else{
-        toastError(registerResponse.Err)
+      console.log(registerResponse);
+
+      if ("Ok" in registerResponse) {
+        setUser(registerResponse.Ok);
+      } else {
+        toastError(registerResponse.Err);
       }
-    }else if ('Err' in getUserResponse){
+    } else if ("Err" in getUserResponse) {
       await authClient.logout();
-      toastError('You didn\'t have account, please register first!')
-    }
-    else if('Ok' in getUserResponse){
-      setUser(getUserResponse.Ok)
+      toastError("You didn't have account, please register first!");
+    } else if ("Ok" in getUserResponse) {
+      const user: TUser = getUserResponse.Ok;
+      user.principal = authClient.getIdentity().getPrincipal();
+      setUser(user);
     }
 
-    if(callback) callback();
+    if (callback) callback();
   };
   const auth = async (name: string, email: string, callback?: () => void) => {
     if (!authClient) return;
     const onSuccessCallback = async () => {
-      update(authClient, name, email, callback)
-    }
+      update(authClient, name, email, callback);
+    };
     authClient.login({
       onSuccess: onSuccessCallback,
     });

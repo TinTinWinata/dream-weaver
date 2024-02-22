@@ -49,7 +49,7 @@ function UserMiddleware<T>(
 ): Result<T, ErrorVariant> {
     const user = UserTree.get(userId);
     if (!user.Some) {
-        return Err({ UserNotFound: "User with " + userId + " not found" });
+        return Err({ UserNotFound: "User not found" });
     }
     return handler(user.Some);
 }
@@ -96,29 +96,25 @@ export default Canister({
     }),
     createPost: update([text, text, int32, text, int, int, Principal], Result(Post,  ErrorVariant), (title: string, description: string, target: number, imageUrl: text, startDate: int, endDate: int, userId: Principal) => {
         const postId = uuidv4()
-        const user = UserTree.get(userId)
-        if(user.Some == undefined) {
-            return Err({UserNotFound : "User with " + userId + " not found"})
-        }
-        user.Some.posts.push(postId)
-        const newPost: Post = {
-            title: title,
-            description: description,
-            currentAmount: 0,
-            target: target,
-            imageUrl: imageUrl,
-            startDate: startDate,
-            endDate: endDate,
-            userId: userId
-        }
-        PostTree.insert(postId, newPost)
-        return Ok(newPost)
-    }),
-    getPosts: query([Principal], Result(Vec(Post), ErrorVariant), (userId: Principal) => {
         return UserMiddleware(userId, (user : User)=>{
-            const posts: Vec<Post> = PostTree.values();
-            return Ok(posts);
+            user.posts.push(postId)
+            const newPost: Post = {
+                title: title,
+                description: description,
+                currentAmount: 0,
+                target: target,
+                imageUrl: imageUrl,
+                startDate: startDate,
+                endDate: endDate,
+                userId: userId
+            }
+            PostTree.insert(postId, newPost)
+            return Ok(newPost)
         })
+    }),
+    getPosts: query([], Result(Vec(Post), ErrorVariant), () => {
+        const posts: Vec<Post> = PostTree.values();
+        return Ok(posts);
     }),
     getPost : query([text], Result(Post, ErrorVariant), (postId : text)=>{
         const post = PostTree.get(postId)
