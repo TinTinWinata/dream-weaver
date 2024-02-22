@@ -13,7 +13,7 @@ export default function RegisterPage() {
   const { auth } = useAuth();
   const { setLoading } = useLoading();
 
-  const {register, handleSubmit, formState: { errors } } = useForm<TRegisterPayload>();
+  const {register, reset, handleSubmit, formState: { errors } } = useForm<TRegisterPayload>();
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<TRegisterPayload> = ({name, email, walletPrincipal }) => {
@@ -22,6 +22,9 @@ export default function RegisterPage() {
       setLoading(false) 
       toastSuccess('Register succesfully')
       navigate('/me')
+    }, () => {
+      reset();
+      setLoading(false)
     })
   }
 

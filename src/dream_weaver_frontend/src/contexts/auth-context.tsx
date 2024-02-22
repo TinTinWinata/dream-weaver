@@ -7,7 +7,7 @@ import { TChildrenProps } from "../types/children-type";
 import { TUser } from "../types/user-type";
 import { toastError } from "../utils/toast";
 type TUserContext = {
-  auth: (username: string, email: string, walletPrincipal: string,callback?: () => void) => Promise<void>;
+  auth: (username: string, email: string, walletPrincipal: string,callback?: () => void,failCallback?: () => void) => Promise<void>;
   user: TUser | undefined;
   logout: () => Promise<void>;
 };
@@ -31,7 +31,7 @@ export function UserProvider({ children }: TChildrenProps) {
     init();
   }, []);
 
-  const update = async (authClient: AuthClient, name?: string, email?: string, walletPrincipal?: string, callback?: ()=>void) => {
+  const update = async (authClient: AuthClient, name?: string, email?: string, walletPrincipal?: string, callback?: ()=>void, failCallback?: () => void) => {
     setAuthClient(authClient);
 
     const getUserResponse = await dream_weaver_backend.getUser(
@@ -49,11 +49,13 @@ export function UserProvider({ children }: TChildrenProps) {
         setUser(registerResponse.Ok)
       }else{
         toastError(registerResponse.Err)
+        if(failCallback) failCallback()
         return;
       }
     } else if ("Err" in getUserResponse) {
       await authClient.logout();
       toastError('You didn\'t have account, please register first!')
+      if(failCallback) failCallback()
       return;
     }
     else if('Ok' in getUserResponse){
@@ -62,10 +64,10 @@ export function UserProvider({ children }: TChildrenProps) {
 
     if (callback) callback();
   };
-  const auth = async (name: string, email: string, walletPrincipal: string, callback?: () => void) => {
+  const auth = async (name: string, email: string, walletPrincipal: string, callback?: () => void, failCallback?: () => void) => {
     if (!authClient) return;
     const onSuccessCallback = async () => {
-      update(authClient, name, email, walletPrincipal, callback)
+      update(authClient, name, email, walletPrincipal, callback, failCallback)
     }
     authClient.login({
       onSuccess: onSuccessCallback,
