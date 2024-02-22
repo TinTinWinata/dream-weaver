@@ -49,10 +49,12 @@ export function UserProvider({ children }: TChildrenProps) {
         setUser(registerResponse.Ok)
       }else{
         toastError(registerResponse.Err)
+        return;
       }
     }else if ('Err' in getUserResponse){
       await authClient.logout();
       toastError('You didn\'t have account, please register first!')
+      return;
     }
     else if('Ok' in getUserResponse){
       setUser(getUserResponse.Ok)
@@ -73,7 +75,6 @@ export function UserProvider({ children }: TChildrenProps) {
     if (!authClient) return;
     await authClient.logout();
     setUser(undefined);
-    navigate("/");
   };
   const data = { auth, user, logout };
   return <context.Provider value={data}>{children}</context.Provider>;

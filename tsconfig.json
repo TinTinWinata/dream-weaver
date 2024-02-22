@@ -24,6 +24,7 @@
         "baseUrl": "."
     },
     "include": [
+        "./src",
         "./src/dream_weaver_frontend"
     ]
 }
