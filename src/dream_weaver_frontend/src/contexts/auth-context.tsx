@@ -23,7 +23,6 @@ const context = createContext<TUserContext>({} as TUserContext);
 export function UserProvider({ children }: TChildrenProps) {
   const [authClient, setAuthClient] = useState<AuthClient>();
   const [user, setUser] = useState<TUser>();
-  const navigate = useNavigate();
 
   const init = async () => {
     const authClient = await AuthClient.create();

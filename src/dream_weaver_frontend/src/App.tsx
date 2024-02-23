@@ -1,11 +1,18 @@
 import { createClient } from "@connect2ic/core";
 import { PlugWallet } from "@connect2ic/core/providers/plug-wallet";
 import { Connect2ICProvider } from "@connect2ic/react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import { UserProvider } from "./contexts/auth-context";
-import { LoadingProvider } from "./contexts/loading-context";
+import "react-toastify/dist/ReactToastify.css";
+import useAuth, { UserProvider } from "./contexts/auth-context";
+import useLoading, { LoadingProvider } from "./contexts/loading-context";
 import CashflowPage from "./pages/cashflow-page";
 import CreateCrowdfundPage from "./pages/create-crowdfund-page";
 import CrowdfundDetailPage from "./pages/crowdfund-detail-page";
@@ -16,7 +23,7 @@ import MePage from "./pages/me-page/me-page";
 import ProfilePage from "./pages/profile-page";
 import RegisterPage from "./pages/register-page";
 import MainTemplate from "./templates/main-template";
-import React from 'react'
+import React from "react";
 
 function App() {
   const client = createClient({
@@ -24,32 +31,58 @@ function App() {
     globalProviderConfig: {
       dev: import.meta.env.DEV,
     },
-  })
+  });
+  const { user } = useAuth();
 
-  return <>
+  const GuestOnly = () => {
+    if (user) {
+      return <Navigate to={"/me"} />;
+    }
+    return <Outlet />;
+  };
+
+  const AuthenticatedOnly = () => {
+    if (user) {
+      return <Outlet />;
+    }
+
+    return <Navigate to={"/"} />;
+  };
+
+  return (
+    <>
       <BrowserRouter>
-      <ToastContainer/>
+        <ToastContainer />
         <Connect2ICProvider client={client}>
           <LoadingProvider>
-            <UserProvider>
-              <MainTemplate>
-                <Routes>
-                  <Route path="/" element={<HomePage/>}/>
-                  <Route path="/me" element={<MePage/>}/>
-                  <Route path="/cashflow" element={<CashflowPage/>}/>
-                  <Route path="/donate/:name" element={<DonatePage/>}/>
-                  <Route path="/profile" element={<ProfilePage/>}/>
-                  <Route path="/crowdfund" element={<CrowdfundPage/>}/>
-                  <Route path="/crowdfund/:id" element={<CrowdfundDetailPage/>}/>
-                  <Route path="/create-crowdfund" element={<CreateCrowdfundPage/>}/>
-                  <Route path="/register" element={<RegisterPage/>}/>
-                </Routes>
-              </MainTemplate>
-            </UserProvider>
+            <MainTemplate>
+              <Routes>
+                <Route element={<GuestOnly />}>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                </Route>
+                <Route element={<AuthenticatedOnly />}>
+                  <Route path="/me" element={<MePage />} />
+                  <Route path="/cashflow" element={<CashflowPage />} />
+                  <Route path="/donate/:name" element={<DonatePage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/crowdfund" element={<CrowdfundPage />} />
+                  <Route
+                    path="/crowdfund/:id"
+                    element={<CrowdfundDetailPage />}
+                  />
+                  <Route
+                    path="/create-crowdfund"
+                    element={<CreateCrowdfundPage />}
+                  />
+                </Route>
+              </Routes>
+            </MainTemplate>
           </LoadingProvider>
         </Connect2ICProvider>
       </BrowserRouter>
-  </>
+    </>
+  );
 }
 
 export default App;
