@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 
-const Post = Record({
+const TPost = Record({
     title : text,
     description : text,
     currentAmount : int32,
@@ -14,9 +14,9 @@ const Post = Record({
     userId: Principal
 })
 
-type Post = typeof Post.tsType
+type TPost = typeof TPost.tsType
 
-const User = Record({
+const TUser = Record({
     email : text,
     username : text,
     name : text,
@@ -28,7 +28,7 @@ const User = Record({
     posts: Vec(text),
     walletPrincipal: text,
 })
-type User = typeof User.tsType
+type TUser = typeof TUser.tsType
 
 const ErrorVariant = Variant({
     UserNotFound : text,
@@ -39,14 +39,14 @@ const ErrorVariant = Variant({
 
 type ErrorVariant  = typeof ErrorVariant.tsType
 
-const PostTree = StableBTreeMap<text,Post>(0)
-const UserTree = StableBTreeMap<Principal,User>(0)
-const UserIndexUsername = StableBTreeMap<text, Principal>(1)
-const UserIndexEmail = StableBTreeMap<text, Principal>(2)
+const PostTree = StableBTreeMap<text,TPost>(0)
+const UserTree = StableBTreeMap<Principal,TUser>(1)
+const UserIndexUsername = StableBTreeMap<text, Principal>(2)
+const UserIndexEmail = StableBTreeMap<text, Principal>(3)
 
 function UserMiddleware<T>(
     userId: Principal,
-    handler: (user : User) => Result<T, ErrorVariant>
+    handler: (user : TUser) => Result<T, ErrorVariant>
 ): Result<T, ErrorVariant> {
     const user = UserTree.get(userId);
     if (!user.Some) {
@@ -61,7 +61,7 @@ export default Canister({
     greet: query([text], text, (name) => {
         return `Hello, ${name}!`;
     }),
-    register: update([text, text, Principal, text],Result(User,  ErrorVariant), (username: string, email : string, principal: Principal, walletPrincipal: string)=>{
+    register: update([text, text, Principal, text],Result(TUser,  ErrorVariant), (username: string, email : string, principal: Principal, walletPrincipal: string)=>{
         const checkUsername = UserIndexUsername.get(username)
         const checkEmail = UserIndexEmail.get(email)
         if(checkUsername.Some || checkEmail.Some){
@@ -72,7 +72,7 @@ export default Canister({
         if(checkUser.Some){
             return Err({UserAlreadyExist : "User with " + principal + " Already exists"})
         }
-        const newUser : User = {
+        const newUser : TUser = {
             walletPrincipal: walletPrincipal,
             username : username,
             email : email,
@@ -89,14 +89,14 @@ export default Canister({
         UserTree.insert(principal,newUser)
         return Ok(newUser)
     }),
-    getUser : query([Principal], Result(User, ErrorVariant), (principal : Principal)=>{
+    getUser : query([Principal], Result(TUser, ErrorVariant), (principal : Principal)=>{
         const user = UserTree.get(principal)
         if(user.Some){
             return Ok(user.Some)
         }
         return Err({UserNotFound : "There is no user with this principal"})
     }),
-    getUserByName: query([text], Result(User, ErrorVariant), (username : string)=>{
+    getUserByName: query([text], Result(TUser, ErrorVariant), (username : string)=>{
         const userPrincipal = UserIndexUsername.get(username)
         if(userPrincipal.Some){
             const user = UserTree.get(userPrincipal.Some)
@@ -109,15 +109,15 @@ export default Canister({
         return Err({UserNotFound : "There is no user with this username"})
     }),
     // Test Only (to be deleted if production)
-    getUsers: query([text], Result(Vec(text), ErrorVariant), (userId: string) => {
-        const users: Vec<text> = UserIndexUsername.keys();
+    getUsers: query([], Result(Vec(Principal), ErrorVariant), () => {
+        const users: Vec<Principal> = UserIndexUsername.values();
         return Ok(users);
     }),
-    createPost: update([text, text, int32, text, int, int, Principal], Result(Post,  ErrorVariant), (title: string, description: string, target: number, imageUrl: text, startDate: int, endDate: int, userId: Principal) => {
+    createPost: update([text, text, int32, text, int, int, Principal], Result(TPost,  ErrorVariant), (title: string, description: string, target: number, imageUrl: text, startDate: int, endDate: int, userId: Principal) => {
         const postId = uuidv4()
-        return UserMiddleware(userId, (user : User)=>{
+        return UserMiddleware(userId, (user : TUser)=>{
             user.posts.push(postId)
-            const newPost: Post = {
+            const newPost: TPost = {
                 title: title,
                 description: description,
                 currentAmount: 0,
@@ -127,24 +127,25 @@ export default Canister({
                 endDate: endDate,
                 userId: userId
             }
+            UserTree.insert(userId, user)
             PostTree.insert(postId, newPost)
             return Ok(newPost)
         })
     }),
-    getPosts: query([], Result(Vec(Post), ErrorVariant), () => {
-        const posts: Vec<Post> = PostTree.values();
+    getPosts: query([], Result(Vec(TPost), ErrorVariant), () => {
+        const posts: Vec<TPost> = PostTree.values();
         return Ok(posts);
     }),
-    getPost : query([text], Result(Post, ErrorVariant), (postId : text)=>{
+    getPost : query([text], Result(TPost, ErrorVariant), (postId : text)=>{
         const post = PostTree.get(postId)
         if(post.Some){
             return Ok(post.Some)
         }
         return Err({PostNotFound : "There is no post with this id"})
     }),
-    getUserPosts: query([Principal], Result(Vec(Post), ErrorVariant), (userId: Principal) => {
-        return UserMiddleware(userId, (user : User)=>{
-            const posts : Vec<Post> = []
+    getUserPosts: query([Principal], Result(Vec(TPost), ErrorVariant), (userId: Principal) => {
+        return UserMiddleware(userId, (user : TUser)=>{
+            const posts : Vec<TPost> = []
             user.posts.forEach(postId => {
                 const post = PostTree.get(postId)
                 if(post.Some) {

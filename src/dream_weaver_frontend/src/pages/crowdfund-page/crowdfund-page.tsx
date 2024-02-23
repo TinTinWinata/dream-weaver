@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Button from "../../components/button";
 import ProxyLink from "../../components/proxy-link";
 import { TPost } from "../../types/post-type";
@@ -12,7 +12,7 @@ export default function CrowdfundPage() {
   useEffect(() => {
     const getPosts = async () => {
       const getPostsResponse = await dream_weaver_backend.getPosts();
-      console.log(getPostsResponse);
+      console.log(getPostsResponse.Ok);
       setPosts(getPostsResponse.Ok);
     };
 
