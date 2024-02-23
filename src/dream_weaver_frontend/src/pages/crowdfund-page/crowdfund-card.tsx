@@ -12,7 +12,7 @@ import moment from "moment";
 export default function CrowdfundCard({ post }: { post: TPost }) {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/crowdfund" + post.id);
+    navigate("/crowdfund/" + post.id);
   };
   const endDate = moment(Number(post.endDate));
   const currDate = moment();

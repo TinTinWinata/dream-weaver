@@ -1,43 +1,91 @@
 import Lottie from "lottie-react";
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { FcAbout } from "react-icons/fc";
-import donationAnimation from '../animations/donate.json';
+import donationAnimation from "../animations/donate.json";
 import Button from "../components/button";
 import Paper from "../components/paper";
 import ProgressBar from "../components/progress-bar";
+import { useNavigate, useParams } from "react-router-dom";
+import { TPost } from "../types/post-type";
+//@ts-ignore
+import { dream_weaver_backend } from "declarations/dream_weaver_backend";
+import moment, { Moment } from "moment";
+import { toastError } from "../utils/toast";
 
 export default function CrowdfundDetailPage() {
+  const { id } = useParams();
+  const [post, setPost] = useState<TPost>();
+  const [endDate, setEndDate] = useState<Moment>();
+  const [currDate, setCurrDate] = useState<Moment>();
+  const nav = useNavigate();
+
+  useEffect(() => {
+    async function getPostWithId() {
+      const getPostResponse = await dream_weaver_backend.getPost(id);
+      console.log(getPostResponse);
+      if ("Ok" in getPostResponse) {
+        setPost(getPostResponse.Ok);
+        setEndDate(moment(Number(getPostResponse.Ok.endDate)));
+        setCurrDate(moment());
+      } else {
+        toastError(getPostResponse.Err.PostNotFound);
+        nav("/crowdfund");
+      }
+    }
+    getPostWithId();
+  }, []);
+
   return (
     <div className="flex flex-col gap-5">
       <Paper className="p-5 flex flex-col gap-4">
         <div
-        style={{
-          backgroundImage: `url('https://storage.nu.or.id/storage/post/16_9/big/img-20211213-wa0014_1639381607.jpg')`}}
-          className="bg-cover rounded-xl w-full h-[400px]" 
+          style={{
+            backgroundImage: `url('${post?.imageUrl}')`,
+          }}
+          className="bg-cover rounded-xl w-full h-[400px]"
         ></div>
         <div className="px-5 flex flex-col gap-2">
-          <h1 className="text-2xl font-bold">“People cannot by korma on romadhon please help”</h1>
+          <h1 className="text-2xl font-bold">“{post?.title}”</h1>
           <div className="flex justify-between items-end">
-            <h1 className="font-black text-3xl"> 5 / 20 ICP</h1>
+            <h1 className="font-black text-3xl">
+              {post?.currentAmount} / {post?.target} ICP
+            </h1>
             <div className=""></div>
-            <div className="text-gray-500">5 Days Left</div>
+            {endDate?.diff(currDate, "days") > 0 && (
+              <div className="text-gray-500">
+                {endDate?.diff(currDate, "days")} Days left
+              </div>
+            )}
+            {endDate?.diff(currDate, "days") == 0 && (
+              <div className="text-gray-500">
+                {endDate.diff(currDate, "hours")} Hours left
+              </div>
+            )}
+            {endDate?.diff(currDate, "hours") == 0 && (
+              <div className="text-gray-500">
+                {endDate.diff(currDate, "minutes")} minutes left
+              </div>
+            )}
           </div>
-          <ProgressBar percentage={40}/>
+          <ProgressBar percentage={post?.currentAmount / post?.target} />
           <div className="py-5 mt-3 flex justify-between">
             <div className="w-full center flex-col gap-2">
-              <FaHeart className="text-red-500 w-16 h-16"/>
+              <FaHeart className="text-red-500 w-16 h-16" />
               <div>8 Donated</div>
             </div>
             <div className="border-r border-gray-700"></div>
             <div className="w-full center flex-col gap-2">
-              <FcAbout className="text-red-500 w-16 h-16"/>
+              <FcAbout className="text-red-500 w-16 h-16" />
               <div>Description</div>
             </div>
             <div className="border-r border-gray-700"></div>
             <div className="w-full center flex-col gap-2">
               <div className="w-16 h-16 relative">
-              <Lottie className="w-60 left-[50%] translate-x-[-50%] translate-y-[-50%] top-[35%] absolute" animationData={donationAnimation}/>
+                <Lottie
+                  className="w-60 left-[50%] translate-x-[-50%] translate-y-[-50%] top-[35%] absolute"
+                  animationData={donationAnimation}
+                />
               </div>
               <div>Donate</div>
             </div>
@@ -45,15 +93,15 @@ export default function CrowdfundDetailPage() {
         </div>
       </Paper>
       <Paper className="p-5">
-          <h1 className="text-xl mb-2">Description</h1>
-          <p className="text-gray-500">Once upon a time, in the bustling city of Romadhon, there was a peculiar tradition that baffled many outsiders. It was the month of Ramadan, a time of fasting and spiritual reflection for Muslims around the world.<br/><br/>However, in Romadhon, there was an additional, seemingly arbitrary rule that stirred curiosity and intrigue among both locals and visitors alike: during Ramadan, people were forbidden from buying or consuming korma.<br/><br/>Korma, a beloved dish of the region, with its rich blend of spices and tender meat or vegetables, was typically enjoyed year-round. But come Ramadan, it became elusive, unattainable to anyone who sought its comforting flavors.<br/><br/>Among the residents of Romadhon was a young man named Amir. Amir was a curious soul, always eager to unravel the mysteries that surrounded him. When he heard about the prohibition on korma during Ramadan, his interest was piqued. He couldn't understand why such a seemingly innocent dish would be forbidden during this holiest of months.
-</p>
-
+        <h1 className="text-xl mb-2">Description</h1>
+        <p className="text-gray-500">{post?.description}</p>
       </Paper>
       <div className="flex flex-col w-full gap-3">
-        <Button  type="secondary" className="py-2 bg-gray-50">Share</Button>
+        <Button type="secondary" className="py-2 bg-gray-50">
+          Share
+        </Button>
         <Button className="py-2">Donate</Button>
       </div>
     </div>
-  )
+  );
 }

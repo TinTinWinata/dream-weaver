@@ -5,7 +5,6 @@ export type TUser = {
   walletPrincipal: string;
   email: string;
   username: string;
-  name: string;
   bio: string;
   youtubeUrl: string;
   tiktokUrl: string;
