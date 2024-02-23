@@ -20,7 +20,6 @@ type TPost = typeof TPost.tsType
 const TUser = Record({
     email : text,
     username : text,
-    name : text,
     bio : text,
     youtubeUrl : text,
     tiktokUrl : text,
@@ -50,7 +49,9 @@ const ErrorVariant = Variant({
     UserNotFound : text,
     UserAlreadyExist: text,
     UsernameOrEmailIsNotValid: text,
-    PostNotFound: text
+    PostNotFound: text,
+    UsernameNotUnique : text,
+    EmailNotUnique: text
 })
 
 type ErrorVariant  = typeof ErrorVariant.tsType
@@ -92,7 +93,6 @@ export default Canister({
             walletPrincipal: walletPrincipal,
             username : username,
             email : email,
-            name : "",
             bio : "There is nothing here ...",
             createdAt : BigInt(Date.now()),
             profilePicture: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
@@ -183,4 +183,35 @@ export default Canister({
             return Ok(posts)
         })
     }),
+    saveUniqueProfile: update([Principal, text, text], Result(TUser, ErrorVariant),(principal : Principal, newUsername : text, newEmail : text)=>{
+        return UserMiddleware(principal, (user : TUser)=>{
+            const usernameCheck = UserIndexUsername.get(newUsername)
+            const emailCheck = UserIndexEmail.get(newEmail)
+            if(usernameCheck.Some && newUsername != user.username){
+                return Err({UsernameNotUnique : `Usernam e ${newUsername} is not Unique`})
+            }
+
+            if( emailCheck.Some && newEmail != user.email){
+                return Err({EmailNotUnique : `Email ${newEmail} is not unique`})
+            }
+
+            UserIndexEmail.remove(user.email)
+            UserIndexUsername.remove(user.username)
+            user.email = newEmail
+            user.username = newUsername
+            UserTree.insert(principal, user)
+            UserIndexEmail.insert(newEmail, principal)
+            UserIndexUsername.insert(newUsername, principal)
+            return Ok(user)
+        })
+    }),
+    saveProfile : update([Principal, text, text,text], Result(TUser, ErrorVariant), (principal : Principal, bio : text, youtubeUrl : text, tiktokUrl : text)=>{
+        return UserMiddleware(principal, (user : TUser)=>{
+            user.bio = bio
+            user.tiktokUrl = tiktokUrl
+            user.youtubeUrl = youtubeUrl
+            UserTree.insert(principal, user)
+            return Ok(user)
+        })
+    })
 })

@@ -25005,7 +25005,6 @@ var TPost = Record2({
 var TUser = Record2({
   email: text,
   username: text,
-  name: text,
   bio: text,
   youtubeUrl: text,
   tiktokUrl: text,
@@ -25030,7 +25029,9 @@ var ErrorVariant = Variant2({
   UserNotFound: text,
   UserAlreadyExist: text,
   UsernameOrEmailIsNotValid: text,
-  PostNotFound: text
+  PostNotFound: text,
+  UsernameNotUnique: text,
+  EmailNotUnique: text
 });
 var PostTree = StableBTreeMap(0);
 var UserTree = StableBTreeMap(1);
@@ -25061,7 +25062,6 @@ var src_default = Canister({
       walletPrincipal,
       username,
       email,
-      name: "",
       bio: "There is nothing here ...",
       createdAt: BigInt(Date.now()),
       profilePicture: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
@@ -25149,6 +25149,35 @@ var src_default = Canister({
         }
       });
       return Ok(posts);
+    });
+  }),
+  saveUniqueProfile: update([Principal3, text, text], Result(TUser, ErrorVariant), (principal, newUsername, newEmail) => {
+    return UserMiddleware(principal, (user) => {
+      const usernameCheck = UserIndexUsername.get(newUsername);
+      const emailCheck = UserIndexEmail.get(newEmail);
+      if (usernameCheck.Some && newUsername != user.username) {
+        return Err({ UsernameNotUnique: `Usernam e ${newUsername} is not Unique` });
+      }
+      if (emailCheck.Some && newEmail != user.email) {
+        return Err({ EmailNotUnique: `Email ${newEmail} is not unique` });
+      }
+      UserIndexEmail.remove(user.email);
+      UserIndexUsername.remove(user.username);
+      user.email = newEmail;
+      user.username = newUsername;
+      UserTree.insert(principal, user);
+      UserIndexEmail.insert(newEmail, principal);
+      UserIndexUsername.insert(newUsername, principal);
+      return Ok(user);
+    });
+  }),
+  saveProfile: update([Principal3, text, text, text], Result(TUser, ErrorVariant), (principal, bio, youtubeUrl, tiktokUrl) => {
+    return UserMiddleware(principal, (user) => {
+      user.bio = bio;
+      user.tiktokUrl = tiktokUrl;
+      user.youtubeUrl = youtubeUrl;
+      UserTree.insert(principal, user);
+      return Ok(user);
     });
   })
 });

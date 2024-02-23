@@ -12,7 +12,6 @@ export default function CrowdfundPage() {
   useEffect(() => {
     const getPosts = async () => {
       const getPostsResponse = await dream_weaver_backend.getPosts();
-      console.log(getPostsResponse.Ok);
       setPosts(getPostsResponse.Ok);
     };
 
@@ -25,8 +24,6 @@ export default function CrowdfundPage() {
         <Button className="w-full">Create Crowdfund</Button>
       </ProxyLink>
       <div className="flex flex-col gap-8">
-        {/* <CrowdfundCard />
-        <CrowdfundCard /> */}
         {posts.length > 0 &&
           posts.map((post) => {
             return <CrowdfundCard post={post} key={post.id} />;
