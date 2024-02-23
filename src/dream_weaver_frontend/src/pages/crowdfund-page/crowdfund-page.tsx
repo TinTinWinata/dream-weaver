@@ -29,7 +29,7 @@ export default function CrowdfundPage() {
         <CrowdfundCard /> */}
         {posts.length > 0 &&
           posts.map((post) => {
-            return <CrowdfundCard post={post} />;
+            return <CrowdfundCard post={post} key={post.id} />;
           })}
       </div>
     </div>

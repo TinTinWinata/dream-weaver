@@ -24991,7 +24991,8 @@ var DidVisitor = class extends idl_exports.Visitor {
 };
 
 // src/dream_weaver_backend/src/index.ts
-var Post = Record2({
+var TPost = Record2({
+  id: text,
   title: text,
   description: text,
   currentAmount: int32,
@@ -25001,7 +25002,7 @@ var Post = Record2({
   endDate: int,
   userId: Principal3
 });
-var User = Record2({
+var TUser = Record2({
   email: text,
   username: text,
   name: text,
@@ -25012,6 +25013,18 @@ var User = Record2({
   profilePicture: text,
   posts: Vec2(text),
   walletPrincipal: text
+});
+var PostDTO = Record2({
+  id: text,
+  title: text,
+  description: text,
+  currentAmount: int32,
+  target: int32,
+  imageUrl: text,
+  startDate: int,
+  endDate: int,
+  username: text,
+  userProfile: text
 });
 var ErrorVariant = Variant2({
   UserNotFound: text,
@@ -25034,7 +25047,7 @@ var src_default = Canister({
   greet: query([text], text, (name) => {
     return `Hello, ${name}!`;
   }),
-  register: update([text, text, Principal3, text], Result(User, ErrorVariant), (username, email, principal, walletPrincipal) => {
+  register: update([text, text, Principal3, text], Result(TUser, ErrorVariant), (username, email, principal, walletPrincipal) => {
     const checkUsername = UserIndexUsername.get(username);
     const checkEmail = UserIndexEmail.get(email);
     if (checkUsername.Some || checkEmail.Some) {
@@ -25061,14 +25074,14 @@ var src_default = Canister({
     UserTree.insert(principal, newUser);
     return Ok(newUser);
   }),
-  getUser: query([Principal3], Result(User, ErrorVariant), (principal) => {
+  getUser: query([Principal3], Result(TUser, ErrorVariant), (principal) => {
     const user = UserTree.get(principal);
     if (user.Some) {
       return Ok(user.Some);
     }
     return Err({ UserNotFound: "There is no user with this principal" });
   }),
-  getUserByName: query([text], Result(User, ErrorVariant), (username) => {
+  getUserByName: query([text], Result(TUser, ErrorVariant), (username) => {
     const userPrincipal = UserIndexUsername.get(username);
     if (userPrincipal.Some) {
       const user = UserTree.get(userPrincipal.Some);
@@ -25085,11 +25098,12 @@ var src_default = Canister({
     const users = UserIndexUsername.values();
     return Ok(users);
   }),
-  createPost: update([text, text, int32, text, int, int, Principal3], Result(Post, ErrorVariant), (title2, description, target, imageUrl, startDate, endDate, userId) => {
+  createPost: update([text, text, int32, text, int, int, Principal3], Result(TPost, ErrorVariant), (title2, description, target, imageUrl, startDate, endDate, userId) => {
     const postId = v4_default();
     return UserMiddleware(userId, (user) => {
       user.posts.push(postId);
       const newPost = {
+        id: postId,
         title: title2,
         description,
         currentAmount: 0,
@@ -25104,18 +25118,28 @@ var src_default = Canister({
       return Ok(newPost);
     });
   }),
-  getPosts: query([], Result(Vec2(Post), ErrorVariant), () => {
+  getPosts: query([], Result(Vec2(PostDTO), ErrorVariant), () => {
     const posts = PostTree.values();
-    return Ok(posts);
+    const postsDTO = posts.map((post) => {
+      const user = UserTree.get(post.userId).Some;
+      const { userId, ...postWithoutUserID } = post;
+      const postDTO = {
+        ...postWithoutUserID,
+        username: user.username,
+        userProfile: user.profilePicture
+      };
+      return postDTO;
+    });
+    return Ok(postsDTO);
   }),
-  getPost: query([text], Result(Post, ErrorVariant), (postId) => {
+  getPost: query([text], Result(TPost, ErrorVariant), (postId) => {
     const post = PostTree.get(postId);
     if (post.Some) {
       return Ok(post.Some);
     }
     return Err({ PostNotFound: "There is no post with this id" });
   }),
-  getUserPosts: query([Principal3], Result(Vec2(Post), ErrorVariant), (userId) => {
+  getUserPosts: query([Principal3], Result(Vec2(TPost), ErrorVariant), (userId) => {
     return UserMiddleware(userId, (user) => {
       const posts = [];
       user.posts.forEach((postId) => {

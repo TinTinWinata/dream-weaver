@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Paper from "../../components/paper";
 import ProgressBar from "../../components/progress-bar";
 import { TPost } from "../../types/post-type";
+import moment from "moment";
 
 // type TCrowdfundCardProps = {
 //   title: string;
@@ -11,8 +12,11 @@ import { TPost } from "../../types/post-type";
 export default function CrowdfundCard({ post }: { post: TPost }) {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/crowdfund");
+    navigate("/crowdfund" + post.id);
   };
+  const endDate = moment(Number(post.endDate));
+  const currDate = moment();
+
   return (
     <Paper
       props={{ onClick: handleClick }}
@@ -31,11 +35,23 @@ export default function CrowdfundCard({ post }: { post: TPost }) {
           </div>
           <div className="flex justify-between">
             <div className="center gap-2">
-              <img src="/assets/profile.png" className="w-8" />
-              <h1>TinTin Winata</h1>
+              <img src={post.userProfile} className="w-8" />
+              <h1>{post.username}</h1>
             </div>
             <div className=""></div>
-            <div className="">5 Days left</div>
+            {endDate.diff(currDate, "days") > 0 && (
+              <div className="">{endDate.diff(currDate, "days")} Days left</div>
+            )}
+            {endDate.diff(currDate, "days") == 0 && (
+              <div className="">
+                {endDate.diff(currDate, "hours")} Hours left
+              </div>
+            )}
+            {endDate.diff(currDate, "hours") == 0 && (
+              <div className="">
+                {endDate.diff(currDate, "minutes")} minutes left
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { Principal } from "@dfinity/principal";
 
 export type TPost = {
+  id: string
   title: string;
   description: string;
   currentAmount: number;
@@ -8,6 +9,7 @@ export type TPost = {
   imageUrl: string;
   startDate: number;
   endDate: number;
-  userId: Principal;
+  username : string
+  userProfile : string
 }
 

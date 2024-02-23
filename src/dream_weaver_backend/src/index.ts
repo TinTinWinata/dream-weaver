@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 const TPost = Record({
+    id : text,
     title : text,
     description : text,
     currentAmount : int32,
@@ -29,6 +30,21 @@ const TUser = Record({
     walletPrincipal: text,
 })
 type TUser = typeof TUser.tsType
+
+const PostDTO = Record({
+    id : text,
+    title : text,
+    description : text,
+    currentAmount : int32,
+    target : int32,
+    imageUrl : text,
+    startDate : int,
+    endDate : int,
+    username : text,
+    userProfile : text
+})
+
+type PostDTO = typeof PostDTO.tsType
 
 const ErrorVariant = Variant({
     UserNotFound : text,
@@ -118,6 +134,7 @@ export default Canister({
         return UserMiddleware(userId, (user : TUser)=>{
             user.posts.push(postId)
             const newPost: TPost = {
+                id : postId,
                 title: title,
                 description: description,
                 currentAmount: 0,
@@ -132,9 +149,20 @@ export default Canister({
             return Ok(newPost)
         })
     }),
-    getPosts: query([], Result(Vec(TPost), ErrorVariant), () => {
+    getPosts: query([], Result(Vec(PostDTO), ErrorVariant), () => {
         const posts: Vec<TPost> = PostTree.values();
-        return Ok(posts);
+        const postsDTO : Vec<PostDTO> = posts.map((post)=>{
+            const user = UserTree.get(post.userId).Some!
+            const {userId, ...postWithoutUserID} = post
+            const postDTO: PostDTO = {
+                ...postWithoutUserID,
+                username: user.username,
+                userProfile: user.profilePicture
+            };
+            return postDTO;
+        })
+
+        return Ok(postsDTO);
     }),
     getPost : query([text], Result(TPost, ErrorVariant), (postId : text)=>{
         const post = PostTree.get(postId)
