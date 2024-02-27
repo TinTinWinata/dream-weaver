@@ -14,6 +14,19 @@
   transform: translate(-50%, -50%);
 }
 
+.overlay-shadow {
+  box-shadow: 12px 12px 0px 0px #0F111B;
+  -webkit-box-shadow: 12px 12px 0px 0px #0F111B;
+  -moz-box-shadow: 12px 12px 0px 0px #0F111B;
+}
+
+.abs-center{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: (-50%, -50%);
+}
+
 .center {
   display: flex;
   justify-content: center;
@@ -101,7 +114,7 @@ input[type=number] {
 // }
 
 // button[type="submit"] {
-//   padding: 5px 20px;
+//   padding: 5px 12px;
 //   margin: 10px auto;
 //   float: right;
 // }
