@@ -26,7 +26,7 @@ function App() {
         <Connect2ICProvider client={client}>
           <LoadingProvider>
             <Routes>
-              <Route path='/overlay' element={<OverlayPage/>}/>
+              <Route path='/overlay/:id' element={<OverlayPage/>}/>
               <Route path='/*' element={<MainTemplate><MainRoute></MainRoute></MainTemplate>}/>
             </Routes>
           </LoadingProvider>

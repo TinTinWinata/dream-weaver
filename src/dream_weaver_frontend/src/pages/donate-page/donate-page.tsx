@@ -19,8 +19,12 @@ export default function DonatePage() {
   const { name } = useParams();
  
   if (name) {
-    const { user } = useUser(name);
+    const { user, isLoading } = useUser(name);
     const [wallet] = useWallet();
+
+    if(isLoading){
+      return <></>
+    }
 
     if(!user){
       return <NotFoundPage text='Ups! I cannot found the users'></NotFoundPage>

@@ -38,10 +38,10 @@ export default function MainRoute() {
   
   return (
     <Routes>
+      <Route path="/donate/:name" element={<DonatePage />} />
       <Route element={<GuestOnly />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/donate/:name" element={<DonatePage />} />
         <Route
           path="/test-socket/:name"
           element={<TestSocketPage />}

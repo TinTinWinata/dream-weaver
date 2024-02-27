@@ -14,6 +14,37 @@
   transform: translate(-50%, -50%);
 }
 
+.connect-button {
+  width: 100%;
+  padding: 0.5em;
+  border-radius: 10px;
+  background-image: linear-gradient(to bottom,  #37A2EA ,#0075FF);
+}
+
+.dialog-container{
+  margin-top: 0.5em;
+}
+
+.img-styles{
+  margin-bottom: 5.5px;
+}
+
+.button-styles:hover{
+  background-color: #242a44;
+}
+
+.button-styles {
+  border-radius: 8px;
+  background-color: #1A1E32;
+  padding: 1.2em;
+  transition: all 0.5s ease;
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+}
+
 .overlay-shadow {
   box-shadow: 12px 12px 0px 0px #0F111B;
   -webkit-box-shadow: 12px 12px 0px 0px #0F111B;
