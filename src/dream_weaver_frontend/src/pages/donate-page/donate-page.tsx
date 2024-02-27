@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import dogAnimation from '../../animations/dog.json';
 import Paper from '../../components/paper';
 import useUser from '../../hooks/use-user';
+import NotFoundPage from '../not-found-page';
 import DonateForm from './donate-form';
 
 
@@ -22,7 +23,7 @@ export default function DonatePage() {
     const [wallet] = useWallet();
 
     if(!user){
-      return <div>Not found users</div>
+      return <NotFoundPage text='Ups! I cannot found the users'></NotFoundPage>
     }
 
     if (!wallet) {

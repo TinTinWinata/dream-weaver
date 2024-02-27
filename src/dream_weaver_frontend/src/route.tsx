@@ -13,6 +13,7 @@ import CrowdfundPage from './pages/crowdfund-page/crowdfund-page';
 import DonatePage from './pages/donate-page/donate-page';
 import HomePage from './pages/home-page';
 import MePage from './pages/me-page/me-page';
+import NotFoundPage from './pages/not-found-page';
 import ProfilePage from './pages/profile-page';
 import RegisterPage from './pages/register-page';
 import TestSocketPage from './pages/test-socket';
@@ -60,6 +61,7 @@ export default function MainRoute() {
           element={<CreateCrowdfundPage />}
         />
       </Route>
+      <Route path='/*' element={<NotFoundPage/>}></Route>
     </Routes>
   )
 }
