@@ -4,6 +4,7 @@ import { Principal } from "@dfinity/principal";
 export type TUser = {
   walletPrincipal: string;
   email: string;
+  name: string;
   username: string;
   bio: string;
   youtubeUrl: string;

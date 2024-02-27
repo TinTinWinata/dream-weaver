@@ -24,6 +24,7 @@ import ProfilePage from "./pages/profile-page";
 import RegisterPage from "./pages/register-page";
 import MainTemplate from "./templates/main-template";
 import React from "react";
+import TestSocketPage from "./pages/test-socket";
 
 function App() {
   const client = createClient({
@@ -60,6 +61,7 @@ function App() {
                 <Route element={<GuestOnly />}>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/test-socket/:name" element={<TestSocketPage />} />
                 </Route>
                 <Route element={<AuthenticatedOnly />}>
                   <Route path="/me" element={<MePage />} />

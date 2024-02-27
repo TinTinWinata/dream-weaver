@@ -8,6 +8,7 @@ import useAuth from "../contexts/auth-context";
 import useLoading from "../contexts/loading-context";
 import { TRegisterPayload } from "../types/register-payload";
 import { toastSuccess } from "../utils/toast";
+import { io } from 'socket.io-client';
 
 export default function RegisterPage() {
   const { auth } = useAuth();
@@ -17,15 +18,24 @@ export default function RegisterPage() {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<TRegisterPayload> = ({name, email, walletPrincipal }) => {
-    setLoading(true);
-    auth(name.trim(), email.trim(), walletPrincipal.trim(), () => {
-      setLoading(false) 
-      toastSuccess('Register succesfully')
-      navigate('/me')
-    }, () => {
-      reset();
-      setLoading(false)
+
+    const socket = io("http://localhost:8888", { query: { name } });
+    socket.emit('send-message', {
+      room: name, donation: {
+        from: "asd",
+        amount: 12,
+        message: "test"
+      }
     })
+    // setLoading(true);
+    // auth(name.trim(), email.trim(), walletPrincipal.trim(), () => {
+    //   setLoading(false) 
+    //   toastSuccess('Register succesfully')
+    //   navigate('/me')
+    // }, () => {
+    //   reset();
+    //   setLoading(false)
+    // })
   }
 
   return (

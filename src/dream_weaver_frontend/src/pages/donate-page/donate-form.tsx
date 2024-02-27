@@ -12,6 +12,7 @@ import Wallet from '../../components/wallet';
 import useLoading from '../../contexts/loading-context';
 import { TUser } from '../../types/user-type';
 import { toastError, toastSuccess } from '../../utils/toast';
+import { io } from 'socket.io-client';
 
 const defaultIcpButton = [1, 2, 3, 5, 10];
 
@@ -32,6 +33,7 @@ export default function DonateForm({ name, user }: TDonateFormProps) {
   const [transfering, setTransfering] = useState<boolean>(false);
 
   const onSubmit = async (data: TDonatePayload) => {
+    
     setTransfering(true);
   }
 
@@ -48,6 +50,7 @@ export default function DonateForm({ name, user }: TDonateFormProps) {
   const onFinish = () => {
     setTransfering(false);
     toastSuccess('Succesfully transfer!');
+  
     setLoading(false);
   }
 
