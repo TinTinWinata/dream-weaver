@@ -40,6 +40,7 @@ export default function MainRoute() {
       <Route element={<GuestOnly />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/donate/:name" element={<DonatePage />} />
         <Route
           path="/test-socket/:name"
           element={<TestSocketPage />}
@@ -48,7 +49,6 @@ export default function MainRoute() {
       <Route element={<AuthenticatedOnly />}>
         <Route path="/me" element={<MePage />} />
         <Route path="/cashflow" element={<CashflowPage />} />
-        <Route path="/donate/:name" element={<DonatePage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/crowdfund" element={<CrowdfundPage />} />
         <Route
