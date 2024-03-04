@@ -25,10 +25,6 @@ const io = new Server(httpServer, {
 
 io.on('connection', (socket) => {
     const name = socket.handshake.query.name
-
-    // console.log(name)
-    console.log(socket.id)
-
     if (typeof name !== 'string') {
         io.to(socket.id).emit('receive-message', {
             error: "socket connection failed"
@@ -37,14 +33,8 @@ io.on('connection', (socket) => {
     }
     socket.join(name)
     socket.on('send-message', ({ room, donation }) => {
-        console.log(donation)
-        // recipients.forEach(recipient => {
-        // const newRecipients = recipients.filter(r => r !== recipient)
-        // newRecipients.push(name)
-        socket.broadcast.to(room).emit('receive-message', donation)
-        // })
+        socket.broadcast.to(room).emit('receive-message',donation)
     })
-
 })
 
 httpServer.listen(8888)
