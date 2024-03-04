@@ -27,7 +27,7 @@ export default function TransferProxy({amount, walletPrincipal, onError, onLoadi
     const resp: TransferResult = await transfer();
     if(resp.isErr()){
       toastError(resp.error)
-    }else{
+    }else{ 
       if(onFinish) onFinish()
     }
   }
