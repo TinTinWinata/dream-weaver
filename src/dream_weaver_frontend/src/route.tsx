@@ -14,6 +14,7 @@ import DonatePage from './pages/donate-page/donate-page';
 import HomePage from './pages/home-page';
 import MePage from './pages/me-page/me-page';
 import NotFoundPage from './pages/not-found-page';
+import OverlaySettingPage from './pages/overlay-setting-page';
 import ProfilePage from './pages/profile-page';
 import RegisterPage from './pages/register-page';
 import TestSocketPage from './pages/test-socket';
@@ -48,6 +49,7 @@ export default function MainRoute() {
         />
       </Route>
       <Route element={<AuthenticatedOnly />}>
+        <Route path="/overlay" element={<OverlaySettingPage />} />
         <Route path="/me" element={<MePage />} />
         <Route path="/cashflow" element={<CashflowPage />} />
         <Route path="/profile" element={<ProfilePage />} />

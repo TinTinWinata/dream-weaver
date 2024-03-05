@@ -1,10 +1,10 @@
+import moment from "moment";
 import React from "react";
 import Button from "../components/button";
 import Input from "../components/input";
 import Paper from "../components/paper";
 import TextArea from "../components/text-area";
 import useAuth from "../contexts/auth-context";
-import moment from "moment";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -14,7 +14,7 @@ export default function ProfilePage() {
     <div className="flex flex-col gap-5">
       <div className="flex gap-3">
         <Paper className="w-[30%] flex-col items-center p-8 justify-center">
-          <div className="center">
+          <div className="center mb-2">
             <img
               src={user?.profilePicture}
               className="w-32"

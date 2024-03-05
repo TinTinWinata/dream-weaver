@@ -1,4 +1,4 @@
-import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, float32, float64, int, int32, query, text, update } from 'azle';
+import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, float64, int, int32, query, text, update } from 'azle';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -50,7 +50,7 @@ const TDonation = Record({
     username: text,
     amount: float64,
     message: text,
-    type: text,
+    donationType: text,
 })
 
 type PostDTO = typeof PostDTO.tsType
@@ -222,7 +222,7 @@ export default Canister({
                     amount: amount,
                     from: from,
                     message: message,
-                    type: type
+                    donationType: type
                 }
                 UserTree.insert(userId, user)
                 DonationTree.insert(donationId, newDonation)

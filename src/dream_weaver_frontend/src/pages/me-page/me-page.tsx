@@ -10,14 +10,14 @@ import MeCard, { TMeCardProps } from "./me-card";
 
 
 export default function MePage() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
 
   const meCards: TMeCardProps[] = [
     {
       animationData: overlayAnimation,
       title: "Overlay",
       description: "OBS overlay for streaming experience .",
-      link: "/overlay/" + user.username,
+      link: "/overlay",
     },
     {
       animationData: cashflowAnimation,

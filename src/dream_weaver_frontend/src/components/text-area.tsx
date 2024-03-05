@@ -4,7 +4,7 @@ import ErrorText from "./error-text";
 
 type TTextArea = {
   title: string;
-  placeholder: string;
+  placeholder?: string;
   props?: DetailedHTMLProps<
     React.TextareaHTMLAttributes<HTMLTextAreaElement>,
     HTMLTextAreaElement
@@ -16,7 +16,6 @@ type TTextArea = {
 };
 
 export default function TextArea({
-  type = "text",
   className,
   title,
   placeholder,

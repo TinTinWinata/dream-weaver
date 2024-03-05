@@ -7,11 +7,11 @@ type TInput = {
   placeholder?: string;
   props?: DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
   children?: ReactNode
-  type?: string;
+  initialValue?: string;
   errors?: { [x: string]: any; };
 }
 
-export default function Input({errors,  title, placeholder, props, children} : TInput) {
+export default function Input({initialValue = '', errors,  title, placeholder, props, children} : TInput) {
   let name = ''
   if(props && props.name){
     name = props.name;
@@ -19,7 +19,7 @@ export default function Input({errors,  title, placeholder, props, children} : T
   return (
     <div className="flex flex-col gap-1">
       <h1>{title}</h1>
-      <input  placeholder={placeholder} className="border border-gray-500 rounded-xl px-3 py-2 bg-transparent" {...props}/>
+      <input placeholder={placeholder} className="border border-gray-500 rounded-xl px-3 py-2 bg-transparent" {...props}/>
       {children}
       {errors && 
           <ErrorMessage
