@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 
 import { TransferError } from '@connect2ic/core';
 import React from 'react';
+import { io } from 'socket.io-client';
 import Button from '../../components/button';
 import Checkbox from '../../components/checkbox';
 import Input from '../../components/input';
@@ -10,10 +11,9 @@ import Tag from '../../components/tag';
 import TransferProxy from '../../components/transfer-proxy';
 import Wallet from '../../components/wallet';
 import useLoading from '../../contexts/loading-context';
+import { TDonation } from '../../types/donation-type';
 import { TUser } from '../../types/user-type';
 import { toastError, toastSuccess } from '../../utils/toast';
-import { io } from 'socket.io-client';
-import { TDonation } from '../../types/donation-type';
 
 const defaultIcpButton = [1, 2, 3, 5, 10];
 
@@ -65,7 +65,7 @@ export default function DonateForm({ name, user }: TDonateFormProps) {
       <Wallet></Wallet>
       {transfering && <TransferProxy onFinish={onFinish} walletPrincipal={user.walletPrincipal} onLoading={onLoading} amount={getValues('amount')} />}
       <Input errors={errors} placeholder='From' title='From' props={{ ...register("from", { required: 'From must be required', maxLength: { value: 40, message: 'From cannot be more than 40 characters' } }) }} />
-      <Input errors={errors} props={{ ...register("amount", { required: 'Amount must be required', min: { value: 0, message: 'TinTin Winata' } }), type: 'number', min: 0, max: 100, step: 0.0001 }} placeholder='1 ICP' title='Amount'>
+      <Input errors={errors} props={{ ...register("amount", { required: 'Amount must be required', min: { value: 0, message: 'Minimal value is 0' } }), type: 'number', min: 0, max: 100, step: 0.0001 }} placeholder='1 ICP' title='Amount'>
         <div className="mt-1 grid grid-cols-5 grid-rows-1 gap-5">
           {defaultIcpButton.map((val) => <Button key={val} className='py-1 px-4'>{`${val} ICP`}</Button>)}
         </div>

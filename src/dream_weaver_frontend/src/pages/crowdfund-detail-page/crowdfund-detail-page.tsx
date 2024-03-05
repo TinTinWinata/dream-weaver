@@ -2,19 +2,21 @@ import Lottie from "lottie-react";
 import React, { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { FcAbout } from "react-icons/fc";
-import donationAnimation from "../animations/donate.json";
-import Button from "../components/button";
-import Paper from "../components/paper";
-import ProgressBar from "../components/progress-bar";
 import { useNavigate, useParams } from "react-router-dom";
-import { TPost } from "../types/post-type";
+import donationAnimation from "../../animations/donate.json";
+import Button from "../../components/button";
+import Paper from "../../components/paper";
+import ProgressBar from "../../components/progress-bar";
+import { TPost } from "../../types/post-type";
 //@ts-ignore
 import { dream_weaver_backend } from "declarations/dream_weaver_backend";
 import moment, { Moment } from "moment";
-import { toastError } from "../utils/toast";
+import { toastError } from "../../utils/toast";
+import CrowdfundDetailModal from "./crowdfund-detail-modal";
 
 export default function CrowdfundDetailPage() {
   const { id } = useParams();
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [post, setPost] = useState<TPost>();
   const [endDate, setEndDate] = useState<Moment>();
   const [currDate, setCurrDate] = useState<Moment>();
@@ -23,7 +25,6 @@ export default function CrowdfundDetailPage() {
   useEffect(() => {
     async function getPostWithId() {
       const getPostResponse = await dream_weaver_backend.getPost(id);
-      console.log(getPostResponse);
       if ("Ok" in getPostResponse) {
         setPost(getPostResponse.Ok);
         setEndDate(moment(Number(getPostResponse.Ok.endDate)));
@@ -37,6 +38,10 @@ export default function CrowdfundDetailPage() {
   }, []);
 
   return (
+    <>
+    {post &&
+      <CrowdfundDetailModal post={post} open={openModal} setOpen={setOpenModal}/>
+    }
     <div className="flex flex-col gap-5">
       <Paper className="p-5 flex flex-col gap-4">
         <div
@@ -100,8 +105,9 @@ export default function CrowdfundDetailPage() {
         <Button type="secondary" className="py-2 bg-gray-50">
           Share
         </Button>
-        <Button className="py-2">Donate</Button>
+        <Button className="py-2" onClick={() => setOpenModal(true)}>Donate</Button>
       </div>
     </div>
+    </>
   );
 }

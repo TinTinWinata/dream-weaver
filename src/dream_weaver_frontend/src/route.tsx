@@ -8,7 +8,7 @@ import {
 import useAuth from './contexts/auth-context';
 import CashflowPage from './pages/cashflow-page/cashflow-page';
 import CreateCrowdfundPage from './pages/create-crowdfund-page';
-import CrowdfundDetailPage from './pages/crowdfund-detail-page';
+import CrowdfundDetailPage from './pages/crowdfund-detail-page/crowdfund-detail-page';
 import CrowdfundPage from './pages/crowdfund-page/crowdfund-page';
 import DonatePage from './pages/donate-page/donate-page';
 import HomePage from './pages/home-page';
@@ -40,6 +40,11 @@ export default function MainRoute() {
   return (
     <Routes>
       <Route path="/donate/:name" element={<DonatePage />} />
+      <Route path="/crowdfund" element={<CrowdfundPage />} />
+      <Route
+        path="/crowdfund/:id"
+        element={<CrowdfundDetailPage />}
+      />
       <Route element={<GuestOnly />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -53,11 +58,6 @@ export default function MainRoute() {
         <Route path="/me" element={<MePage />} />
         <Route path="/cashflow" element={<CashflowPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/crowdfund" element={<CrowdfundPage />} />
-        <Route
-          path="/crowdfund/:id"
-          element={<CrowdfundDetailPage />}
-        />
         <Route
           path="/create-crowdfund"
           element={<CreateCrowdfundPage />}

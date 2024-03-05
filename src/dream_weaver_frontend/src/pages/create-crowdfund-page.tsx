@@ -58,6 +58,7 @@ export default function CreateCrowdfundPage() {
   };
 
   return (
+    <>
     <Paper className="p-5">
       <form encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
         <h1 className="text-center text-2xl mb-4 font-bold">
@@ -126,5 +127,6 @@ export default function CreateCrowdfundPage() {
         </div>
       </form>
     </Paper>
+    </>
   );
 }
