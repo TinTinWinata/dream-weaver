@@ -6,7 +6,7 @@ import {
   Routes
 } from 'react-router-dom';
 import useAuth from './contexts/auth-context';
-import CashflowPage from './pages/cashflow-page';
+import CashflowPage from './pages/cashflow-page/cashflow-page';
 import CreateCrowdfundPage from './pages/create-crowdfund-page';
 import CrowdfundDetailPage from './pages/crowdfund-detail-page';
 import CrowdfundPage from './pages/crowdfund-page/crowdfund-page';

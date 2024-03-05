@@ -1,12 +1,13 @@
 import Lottie from "lottie-react";
 import React from 'react';
-import animation from '../animations/hero.json';
-import Button from "../components/button";
-import Paper from "../components/paper";
+import animation from '../../animations/hero.json';
+import Button from "../../components/button";
+import Paper from "../../components/paper";
+import CashflowTable from "./cashflow-table";
 
 export default function CashflowPage() {
   return (
-    <div>
+    <div className="flex flex-col gap-3">
       <Paper>
         <div className="flex  px-5">
           <div className="w-full py-12 pl-8 flex justify-center flex-col gap-3">
@@ -20,6 +21,11 @@ export default function CashflowPage() {
           <div className="relative w-full">
             <Lottie className="absolute left-[50%] translate-x-[-50%] translate-y-[-50%] top-[50%] w-66" animationData={animation}/>
           </div>
+        </div>
+      </Paper>
+      <Paper className="p-5">
+        <div className="">
+          <CashflowTable/>
         </div>
       </Paper>
     </div>
