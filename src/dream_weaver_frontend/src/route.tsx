@@ -11,7 +11,7 @@ import CreateCrowdfundPage from './pages/create-crowdfund-page';
 import CrowdfundDetailPage from './pages/crowdfund-detail-page/crowdfund-detail-page';
 import CrowdfundPage from './pages/crowdfund-page/crowdfund-page';
 import DonatePage from './pages/donate-page/donate-page';
-import HomePage from './pages/home-page';
+import HomePage from './pages/home-page/home-page';
 import MePage from './pages/me-page/me-page';
 import NotFoundPage from './pages/not-found-page';
 import OverlaySettingPage from './pages/overlay-setting-page';
