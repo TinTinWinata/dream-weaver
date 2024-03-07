@@ -95,7 +95,7 @@ export default function CashflowDonateTable({
               </td>
               <td className="w-[25%] py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
                 <div className="flex items-center justify-end gap-x-2 sm:justify-start">
-                  <div
+                  {/* <div
                     className={classNames(
                       item.done == true
                         ? "text-green-400 bg-green-400/10"
@@ -104,7 +104,7 @@ export default function CashflowDonateTable({
                     )}
                   >
                     <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                  </div>
+                  </div> */}
                   <div className="text-white">{item.amount} ICP</div>
                 </div>
               </td>
@@ -115,7 +115,7 @@ export default function CashflowDonateTable({
                   </div>
                 </div>
               </td>
-              <td className="w-[25%] py-4 pr-8 sm:pl-6 lg:pl-8">
+              <td className="w-[25%] py-4 pr-8 hidden sm:table-cell">
                 <div className="flex items-center gap-x-4">
                   <div className="truncate text-sm font-medium leading-6 text-white">
                     {toDate(Number(item.createdAt))}

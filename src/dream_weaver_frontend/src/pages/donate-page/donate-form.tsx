@@ -16,6 +16,7 @@ import { TUser } from "../../types/user-type";
 import { toastError, toastSuccess } from "../../utils/toast";
 // @ts-ignore
 import { dream_weaver_backend } from "declarations/dream_weaver_backend";
+import { useNavigate } from "react-router-dom";
 
 const defaultIcpButton = [1, 2, 3, 5, 10];
 
@@ -42,7 +43,7 @@ export default function DonateForm({ name, user }: TDonateFormProps) {
   const { setLoading } = useLoading();
   const [transfering, setTransfering] = useState<boolean>(false);
   const socket = io("http://localhost:8888", { query: { name } });
-
+  const navigate = useNavigate();
   const [donation, setDonation] = useState<TDonation>();
 
   const onSubmit = async (data: TDonatePayload) => {
@@ -75,9 +76,17 @@ export default function DonateForm({ name, user }: TDonateFormProps) {
       donation.message,
       "Donation"
     );
-    console.log(cDonation);
     socket.emit("send-message", { room: name, donation });
+    navigate('/me');
   };
+
+  const handleAdd = (val:string) => {
+    let temp = parseInt(getValues('amount').toString(), 10);
+    if(!temp) {
+      temp = 0;
+    }
+    setValue('amount', temp +  parseInt(val, 10));
+  }
 
   return (
     <form
@@ -124,7 +133,7 @@ export default function DonateForm({ name, user }: TDonateFormProps) {
       >
         <div className="mt-1 grid grid-cols-5 grid-rows-1 gap-5">
           {defaultIcpButton.map((val) => (
-            <Button key={val} className="py-1 px-4">{`${val} ICP`}</Button>
+            <Button props={{type: 'button'}} onClick={() => handleAdd(val.toString())} key={val} className="py-1 px-4">{`${val} ICP`}</Button>
           ))}
         </div>
       </Input>

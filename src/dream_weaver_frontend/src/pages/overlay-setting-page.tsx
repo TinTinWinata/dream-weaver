@@ -27,7 +27,6 @@ export default function OverlaySettingPage() {
         </Paper>
         <Paper className="mt-2 p-5 mx-5 flex flex-col gap-4">
           <Content
-          
             title='Donate Link'
             value={`${import.meta.env.VITE_APP_URL}/donate/${user.username}`}
             props={{ disabled: true }}
