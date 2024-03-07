@@ -16,6 +16,7 @@ export default function CashflowPage() {
     const withdrawRes = await dream_weaver_backend.withdrawDonations(
       user.principal
     );
+    console.log(withdrawRes);
   };
   const [donations, setDonations] = useState<TCashflow[]>([]);
 
@@ -27,9 +28,9 @@ export default function CashflowPage() {
       console.log(userDonations);
 
       setDonations(userDonations.Ok);
-      return userDonations;
     };
-  }, [donations]);
+    getDonations();
+  }, []);
 
   function filterDonation(arr: TCashflow[], type: string): TCashflow[] {
     return arr.filter((o) => o.donationType == type);

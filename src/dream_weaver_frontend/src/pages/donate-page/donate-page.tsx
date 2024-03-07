@@ -29,14 +29,16 @@ export default function DonatePage() {
       return <NotFoundPage text="Ups! I cannot found the users"></NotFoundPage>;
     }
 
-    // if (!wallet) {
-    //   return <>
-    //     <div>
-    //       <ConnectButton></ConnectButton>
-    //     </div>
-    //     <ConnectDialog></ConnectDialog>
-    //   </>;
-    // }
+    if (!wallet) {
+      return (
+        <>
+          <div>
+            <ConnectButton></ConnectButton>
+          </div>
+          <ConnectDialog></ConnectDialog>
+        </>
+      );
+    }
     return (
       <div>
         <h2 className="text-center text-2xl font-bold py-5 mt-2">{name}</h2>

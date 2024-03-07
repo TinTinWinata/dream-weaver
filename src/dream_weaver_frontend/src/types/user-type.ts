@@ -7,7 +7,7 @@ export type TUser = {
   name: string;
   username: string;
   bio: string;
-  currentMoney: number
+  currentMoney: number;
   youtubeUrl: string;
   tiktokUrl: string;
   createdAt: bigint;

@@ -32,12 +32,12 @@ export default function TransferProxy({
   }, [error]);
 
   const init = async () => {
-    // const resp: TransferResult = await transfer();
-    // if (resp.isErr()) {
-    // toastError(resp.error)
-    // } else {
-    if (onFinish) onFinish();
-    // }
+    const resp: TransferResult = await transfer();
+    if (resp.isErr()) {
+      toastError(resp.error);
+    } else {
+      if (onFinish) onFinish();
+    }
   };
 
   useEffect(() => {

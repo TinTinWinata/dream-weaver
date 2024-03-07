@@ -6,5 +6,5 @@ export type TCashflow = {
     message: string;
     donationType: string;
     done: boolean;
-    createdAt: number;
+    createdAt: bigint;
   };

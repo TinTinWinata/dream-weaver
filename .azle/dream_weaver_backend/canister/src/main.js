@@ -25256,13 +25256,8 @@ var src_default = Canister({
   }),
   withdrawDonations: query([Principal3], Result(bool, ErrorVariant), (userId) => {
     return UserMiddleware(userId, (user) => {
-      user.donations.forEach((donationId) => {
-        const donation = DonationTree.get(donationId);
-        if (donation.Some) {
-          donation.Some.done = true;
-          DonationTree.insert(donationId, donation.Some);
-        }
-      });
+      user.currentMoney = 0;
+      UserTree.insert(userId, user);
       return Ok(true);
     });
   }),

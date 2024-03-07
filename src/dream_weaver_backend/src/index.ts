@@ -1,4 +1,4 @@
-import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, bool, float64, int, int32, int64, query, text, update } from 'azle';
+import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, bool, float64, ic, int, int32, int64, query, text, update } from 'azle';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -254,13 +254,8 @@ export default Canister({
     }),
     withdrawDonations: query([Principal], Result(bool, ErrorVariant), (userId: Principal) => {
         return UserMiddleware(userId, (user: TUser) => {
-            user.donations.forEach(donationId => {
-                const donation = DonationTree.get(donationId)
-                if (donation.Some) {
-                    donation.Some.done = true
-                    DonationTree.insert(donationId, donation.Some)
-                }
-            });
+            user.currentMoney = 0
+            UserTree.insert(userId, user)
             return Ok(true)
         })
     }),

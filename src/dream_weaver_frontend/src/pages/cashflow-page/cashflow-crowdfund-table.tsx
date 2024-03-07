@@ -28,8 +28,10 @@ const activityItems = [
   },
 ];
 
-function toDate(dateUnix: number) {
-  var date = new Date(dateUnix * 1000);
+function toDate(dateUnix: bigint) {
+  console.log(dateUnix);
+
+  var date = new Date(Number(dateUnix));
   return date.toDateString() + " " + date.toTimeString().substring(0, 8);
 }
 

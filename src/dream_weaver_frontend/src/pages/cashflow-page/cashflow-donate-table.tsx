@@ -29,7 +29,7 @@ const activityItems = [
 ];
 
 function toDate(dateUnix: number) {
-  var date = new Date(dateUnix * 1000);
+  var date = new Date(dateUnix);
   return date.toDateString() + " " + date.toTimeString().substring(0, 8);
 }
 
@@ -118,7 +118,7 @@ export default function CashflowDonateTable({
               <td className="w-[25%] py-4 pr-8 sm:pl-6 lg:pl-8">
                 <div className="flex items-center gap-x-4">
                   <div className="truncate text-sm font-medium leading-6 text-white">
-                    {toDate(item.createdAt)}
+                    {toDate(Number(item.createdAt))}
                   </div>
                 </div>
               </td>
