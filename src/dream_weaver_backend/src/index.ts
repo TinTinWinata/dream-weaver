@@ -41,7 +41,8 @@ const PostDTO = Record({
     startDate: int,
     endDate: int,
     username: text,
-    userProfile: text
+    userProfile: text,
+    userWallet : text
 })
 
 const TDonation = Record({
@@ -170,17 +171,26 @@ export default Canister({
             const postDTO: PostDTO = {
                 ...postWithoutUserID,
                 username: user.username,
-                userProfile: user.profilePicture
+                userProfile: user.profilePicture,
+                userWallet : user.walletPrincipal
             };
             return postDTO;
         })
 
         return Ok(postsDTO);
     }),
-    getPost: query([text], Result(TPost, ErrorVariant), (postId: text) => {
+    getPost: query([text], Result(PostDTO, ErrorVariant), (postId: text) => {
         const post = PostTree.get(postId)
         if (post.Some) {
-            return Ok(post.Some)
+            const user = UserTree.get(post.Some!.userId).Some!
+            const { userId, ...postWithoutUserID } = post.Some!
+            const postDTO: PostDTO = {
+                ...postWithoutUserID,
+                username: user.username,
+                userProfile: user.profilePicture,
+                userWallet : user.walletPrincipal
+            };
+            return Ok(postDTO)
         }
         return Err({ PostNotFound: "There is no post with this id" })
     }),
@@ -211,9 +221,7 @@ export default Canister({
         const userPrincipal = UserIndexUsername.get(username)
         if (userPrincipal.Some) {
             const userId = userPrincipal.Some
-            const userInstance = UserTree.get(userPrincipal.Some)
-            if (userInstance.Some) {
-                const user = userInstance.Some
+            UserMiddleware(userId, (user : TUser)=>{
                 const donationId = uuidv4()
                 user.donations.push(username)
                 const newDonation: TDonation = {
@@ -227,9 +235,9 @@ export default Canister({
                 UserTree.insert(userId, user)
                 DonationTree.insert(donationId, newDonation)
                 return Ok(newDonation)
-            } else {
-                return Err({ UserNotFound: "User object didn\'t found on the tree" })
-            }
+            })
+        }else {
+            return Err({ UserNotFound: "User object didn\'t found on the tree" })
         }
     }),
     getUserDonations: query([Principal], Result(Vec(TDonation), ErrorVariant), (userId: Principal) => {

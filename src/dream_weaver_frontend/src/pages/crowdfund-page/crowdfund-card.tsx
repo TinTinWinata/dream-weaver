@@ -16,6 +16,7 @@ export default function CrowdfundCard({ post }: { post: TPost }) {
   };
   const endDate = moment(Number(post.endDate));
   const currDate = moment();
+  console.log(post);
 
   return (
     <Paper
@@ -24,9 +25,13 @@ export default function CrowdfundCard({ post }: { post: TPost }) {
       className="relative cursor-pointer"
     >
       <div className="flex gap-5">
-      <div className="relative w-[40%] h-[220px] rounded-l-lg rounded-r-md overflow-hidden">
-        <img src={post.imageUrl} alt="Post" className="absolute inset-0 w-full h-full object-cover" />
-      </div>
+        <div className="relative w-[40%] h-[220px] rounded-l-lg rounded-r-md overflow-hidden">
+          <img
+            src={post.imageUrl}
+            alt="Post"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
         {/* <img className="rounded-md h-full w-[40%]" src={post.imageUrl} /> */}
         <div className="w-[60%] px-8 py-10 flex flex-col gap-5">
           <h1 className="text-xl font-bold">{post.description}</h1>

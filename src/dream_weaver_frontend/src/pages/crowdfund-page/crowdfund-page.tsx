@@ -12,6 +12,7 @@ export default function CrowdfundPage() {
   useEffect(() => {
     const getPosts = async () => {
       const getPostsResponse = await dream_weaver_backend.getPosts();
+
       setPosts(getPostsResponse.Ok);
     };
 

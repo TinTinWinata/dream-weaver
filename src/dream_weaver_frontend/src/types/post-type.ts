@@ -10,6 +10,7 @@ export type TPost = {
   startDate: number;
   endDate: number;
   username : string
-  userProfile : string
+  userProfile : string;
+  userWallet: string
 }
 
