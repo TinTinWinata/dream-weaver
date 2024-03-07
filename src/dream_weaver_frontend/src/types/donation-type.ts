@@ -3,3 +3,4 @@ export type TDonation = {
     amount: number;
     message: string;
 }
+

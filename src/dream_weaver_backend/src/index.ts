@@ -1,4 +1,4 @@
-import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, float64, int, int32, query, text, update } from 'azle';
+import { Canister, Err, Ok, Principal, Record, Result, StableBTreeMap, Variant, Vec, bool, float64, int, int32, int64, query, text, update } from 'azle';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -23,6 +23,7 @@ const TUser = Record({
     bio: text,
     youtubeUrl: text,
     tiktokUrl: text,
+    currentMoney: float64,
     createdAt: int,
     profilePicture: text,
     posts: Vec(text),
@@ -52,6 +53,8 @@ const TDonation = Record({
     amount: float64,
     message: text,
     donationType: text,
+    done: bool,
+    createdAt: int
 })
 
 type PostDTO = typeof PostDTO.tsType
@@ -106,6 +109,7 @@ export default Canister({
             walletPrincipal: walletPrincipal,
             username: username,
             email: email,
+            currentMoney: 0,
             bio: "There is nothing here ...",
             createdAt: BigInt(Date.now()),
             profilePicture: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
@@ -221,24 +225,44 @@ export default Canister({
         const userPrincipal = UserIndexUsername.get(username)
         if (userPrincipal.Some) {
             const userId = userPrincipal.Some
-            UserMiddleware(userId, (user : TUser)=>{
+            const userI = UserTree.get(userId);
+            if (!userI.Some) {
+                return Err({ UserNotFound: "User not found" });
+            }
+
+            const user = userI.Some
                 const donationId = uuidv4()
-                user.donations.push(username)
+                user.currentMoney += amount
+                user.donations.push(donationId)
                 const newDonation: TDonation = {
                     id: donationId,
                     username: username,
                     amount: amount,
+                    done: false,
                     from: from,
                     message: message,
-                    donationType: type
+                    donationType: type,
+                    createdAt: BigInt(Date.now())
                 }
                 UserTree.insert(userId, user)
                 DonationTree.insert(donationId, newDonation)
                 return Ok(newDonation)
-            })
+            
         }else {
             return Err({ UserNotFound: "User object didn\'t found on the tree" })
         }
+    }),
+    withdrawDonations: query([Principal], Result(bool, ErrorVariant), (userId: Principal) => {
+        return UserMiddleware(userId, (user: TUser) => {
+            user.donations.forEach(donationId => {
+                const donation = DonationTree.get(donationId)
+                if (donation.Some) {
+                    donation.Some.done = true
+                    DonationTree.insert(donationId, donation.Some)
+                }
+            });
+            return Ok(true)
+        })
     }),
     getUserDonations: query([Principal], Result(Vec(TDonation), ErrorVariant), (userId: Principal) => {
         return UserMiddleware(userId, (user: TUser) => {

@@ -7090,6 +7090,25 @@ function Vec2(t2) {
   return new AzleVec(t2);
 }
 
+// node_modules/azle/src/lib/candid/types/primitive/bool.ts
+var AzleBool = class {
+  constructor() {
+    __publicField(this, "_azleKind", "AzleBool");
+  }
+  static toBytes(data) {
+    return encode3(this, data);
+  }
+  static fromBytes(bytes3) {
+    return decode3(this, bytes3);
+  }
+  static getIdl() {
+    return idl_exports.Bool;
+  }
+};
+__publicField(AzleBool, "_azleKind", "AzleBool");
+__publicField(AzleBool, "tsType");
+var bool = AzleBool;
+
 // node_modules/azle/src/lib/candid/types/primitive/floats/float64.ts
 var AzleFloat64 = class {
   constructor() {
@@ -25027,6 +25046,7 @@ var TUser = Record2({
   bio: text,
   youtubeUrl: text,
   tiktokUrl: text,
+  currentMoney: float64,
   createdAt: int,
   profilePicture: text,
   posts: Vec2(text),
@@ -25052,7 +25072,9 @@ var TDonation = Record2({
   username: text,
   amount: float64,
   message: text,
-  donationType: text
+  donationType: text,
+  done: bool,
+  createdAt: int
 });
 var ErrorVariant = Variant2({
   UserNotFound: text,
@@ -25092,6 +25114,7 @@ var src_default = Canister({
       walletPrincipal,
       username,
       email,
+      currentMoney: 0,
       bio: "There is nothing here ...",
       createdAt: BigInt(Date.now()),
       profilePicture: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
@@ -25206,24 +25229,42 @@ var src_default = Canister({
     const userPrincipal = UserIndexUsername.get(username);
     if (userPrincipal.Some) {
       const userId = userPrincipal.Some;
-      UserMiddleware(userId, (user) => {
-        const donationId = v4_default();
-        user.donations.push(username);
-        const newDonation = {
-          id: donationId,
-          username,
-          amount,
-          from,
-          message,
-          donationType: type
-        };
-        UserTree.insert(userId, user);
-        DonationTree.insert(donationId, newDonation);
-        return Ok(newDonation);
-      });
+      const userI = UserTree.get(userId);
+      if (!userI.Some) {
+        return Err({ UserNotFound: "User not found" });
+      }
+      const user = userI.Some;
+      const donationId = v4_default();
+      user.currentMoney += amount;
+      user.donations.push(donationId);
+      const newDonation = {
+        id: donationId,
+        username,
+        amount,
+        done: false,
+        from,
+        message,
+        donationType: type,
+        createdAt: BigInt(Date.now())
+      };
+      UserTree.insert(userId, user);
+      DonationTree.insert(donationId, newDonation);
+      return Ok(newDonation);
     } else {
       return Err({ UserNotFound: "User object didn't found on the tree" });
     }
+  }),
+  withdrawDonations: query([Principal3], Result(bool, ErrorVariant), (userId) => {
+    return UserMiddleware(userId, (user) => {
+      user.donations.forEach((donationId) => {
+        const donation = DonationTree.get(donationId);
+        if (donation.Some) {
+          donation.Some.done = true;
+          DonationTree.insert(donationId, donation.Some);
+        }
+      });
+      return Ok(true);
+    });
   }),
   getUserDonations: query([Principal3], Result(Vec2(TDonation), ErrorVariant), (userId) => {
     return UserMiddleware(userId, (user) => {

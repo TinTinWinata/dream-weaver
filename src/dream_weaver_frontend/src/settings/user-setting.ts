@@ -11,4 +11,5 @@ export const DEFAULT_USER: TUser = {
   tiktokUrl: '',
   username: '',
   youtubeUrl: '',
+  currentMoney: 0,
 }

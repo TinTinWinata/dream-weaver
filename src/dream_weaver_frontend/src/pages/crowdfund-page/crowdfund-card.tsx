@@ -16,7 +16,6 @@ export default function CrowdfundCard({ post }: { post: TPost }) {
   };
   const endDate = moment(Number(post.endDate));
   const currDate = moment();
-  console.log(post);
 
   return (
     <Paper

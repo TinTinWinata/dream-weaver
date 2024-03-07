@@ -6,6 +6,8 @@ import TransferProxy from "../../components/transfer-proxy";
 import Wallet from "../../components/wallet";
 import { toastSuccess } from "../../utils/toast";
 import { TCrowdfundDetailModalProps } from "./crowdfund-detail-modal";
+// @ts-ignore
+import { dream_weaver_backend } from "declarations/dream_weaver_backend";
 
 type TDonatePayload = {
   amount: number;
@@ -19,6 +21,7 @@ export default function CrowdfundModalForm({
   post,
 }: TCrowdfundModalFormProps) {
   const [transfering, setTransfering] = useState<boolean>(false);
+  const [donatePayload, setDonatePayload] = useState<TDonatePayload>();
   const wallet = useWallet();
 
   console.log("Wallet : ", wallet);
@@ -45,10 +48,19 @@ export default function CrowdfundModalForm({
 
   const onSubmit = (data: TDonatePayload) => {
     setTransfering(true);
+    setDonatePayload(data);
   };
 
-  const onFinish = () => {
+  const onFinish = async () => {
     toastSuccess("Thankyou for your donation!");
+    const cDonation = await dream_weaver_backend.createDonation(
+      "",
+      post.username,
+      donatePayload.amount,
+      "",
+      "Crowdfund"
+    );
+    console.log(cDonation);
     setOpen(false);
   };
 
