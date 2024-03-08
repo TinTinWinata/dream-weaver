@@ -221,6 +221,16 @@ export default Canister({
             return Err({ PostNotFound: "Post object didn\'t found on the tree" })
         }
     }),
+    postSurplus: update([float64, text], Result(TPost, ErrorVariant), (amount:number, postId: string)=>{
+        const postInstance = PostTree.get(postId)
+        if(postInstance.Some){
+            const post = postInstance.Some
+            post.currentAmount += amount;
+            PostTree.insert(post.id, post)
+            return Ok(post)
+        }
+        return Err({PostNotFound: "Post not found !"})
+    }),
     createDonation: update([text, text, float64, text, text], Result(TDonation, ErrorVariant), (from: string, username: string, amount: number, message: string, type: string) => {
         const userPrincipal = UserIndexUsername.get(username)
         if (userPrincipal.Some) {
@@ -231,28 +241,28 @@ export default Canister({
             }
 
             const user = userI.Some
-                const donationId = uuidv4()
-                user.currentMoney += amount
-                user.donations.push(donationId)
-                const newDonation: TDonation = {
-                    id: donationId,
-                    username: username,
-                    amount: amount,
-                    done: false,
-                    from: from,
-                    message: message,
-                    donationType: type,
-                    createdAt: BigInt(Date.now())
-                }
-                UserTree.insert(userId, user)
-                DonationTree.insert(donationId, newDonation)
-                return Ok(newDonation)
+            const donationId = uuidv4()
+            user.currentMoney += amount
+            user.donations.push(donationId)
+            const newDonation: TDonation = {
+                id: donationId,
+                username: username,
+                amount: amount,
+                done: false,
+                from: from,
+                message: message,
+                donationType: type,
+                createdAt: BigInt(Date.now())
+            }
+            UserTree.insert(userId, user)
+            DonationTree.insert(donationId, newDonation)
+            return Ok(newDonation)
             
         }else {
             return Err({ UserNotFound: "User object didn\'t found on the tree" })
         }
     }),
-    withdrawDonations: query([Principal], Result(bool, ErrorVariant), (userId: Principal) => {
+    withdrawDonations: update([Principal], Result(bool, ErrorVariant), (userId: Principal) => {
         return UserMiddleware(userId, (user: TUser) => {
             user.currentMoney = 0
             UserTree.insert(userId, user)

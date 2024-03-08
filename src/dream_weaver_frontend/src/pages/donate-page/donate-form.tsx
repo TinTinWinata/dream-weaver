@@ -77,16 +77,16 @@ export default function DonateForm({ name, user }: TDonateFormProps) {
       "Donation"
     );
     socket.emit("send-message", { room: name, donation });
-    navigate('/me');
+    navigate("/me");
   };
 
-  const handleAdd = (val:string) => {
-    let temp = parseInt(getValues('amount').toString(), 10);
-    if(!temp) {
+  const handleAdd = (val: string) => {
+    let temp = parseInt(getValues("amount").toString(), 10);
+    if (!temp) {
       temp = 0;
     }
-    setValue('amount', temp +  parseInt(val, 10));
-  }
+    setValue("amount", temp + parseInt(val, 10));
+  };
 
   return (
     <form
@@ -133,7 +133,12 @@ export default function DonateForm({ name, user }: TDonateFormProps) {
       >
         <div className="mt-1 grid grid-cols-5 grid-rows-1 gap-5">
           {defaultIcpButton.map((val) => (
-            <Button props={{type: 'button'}} onClick={() => handleAdd(val.toString())} key={val} className="py-1 px-4">{`${val} ICP`}</Button>
+            <Button
+              props={{ type: "button" }}
+              onClick={() => handleAdd(val.toString())}
+              key={val}
+              className="py-1 px-4"
+            >{`${val} ICP`}</Button>
           ))}
         </div>
       </Input>

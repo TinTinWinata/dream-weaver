@@ -26,6 +26,7 @@ export default function CrowdfundModalForm({
 
   console.log("Wallet : ", wallet);
   console.log(post.userWallet);
+  console.log(post);
 
   if (!wallet || !wallet[0]) {
     return (
@@ -60,6 +61,12 @@ export default function CrowdfundModalForm({
       "",
       "Crowdfund"
     );
+
+    const updatePost = await dream_weaver_backend.postSurplus(
+      donatePayload.amount,
+      post.id
+    );
+    console.log(updatePost);
     console.log(cDonation);
     setOpen(false);
   };

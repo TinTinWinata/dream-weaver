@@ -38,7 +38,9 @@ export default function CrowdfundCard({ post }: { post: TPost }) {
             <div className="">
               {post.currentAmount} / {post.target} ICP
             </div>
-            <ProgressBar percentage={post.currentAmount / post.target} />
+            <ProgressBar
+              percentage={(post.currentAmount / post.target) * 100}
+            />
           </div>
           <div className="flex justify-between">
             <div className="center gap-2">
